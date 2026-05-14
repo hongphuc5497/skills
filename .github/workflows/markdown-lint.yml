@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - "**.md"
-      - ".markdownlint-cli2.jsonc"
+      - ".markdownlint.json"
   pull_request:
     branches: [main]
     paths:
