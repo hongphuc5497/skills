@@ -2,7 +2,6 @@
 name: nextjs-16-tailwind
 description: "Build Next.js 16 + Tailwind CSS 4 pages following App Router patterns and Tailwind CSS v4 API conventions. Use for creating new pages, components, or layouts. Not for general React work without Next.js."
 license: MIT
-effort: high
 metadata:
   version: 1.0.0
   author: hongphuc5497

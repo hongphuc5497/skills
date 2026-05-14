@@ -2,7 +2,6 @@
 name: fine-tuning-gemma
 description: "Fine-tune Gemma models via Unsloth on macOS — dataset prep, training, evaluation. Currently configured for Gemma 4 E4B 4-bit on M2 Pro 32GB GPU."
 license: MIT
-effort: max
 metadata:
   version: 1.0.0
   author: hongphuc5497

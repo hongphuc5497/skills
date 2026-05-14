@@ -2,7 +2,6 @@
 name: hermes-config
 description: "Configure Hermes Agent — providers, models, tools, skills, voice, gateway, plugins. Uses hermes CLI commands, not guesswork."
 license: MIT
-effort: medium
 metadata:
   version: 1.0.0
   author: hongphuc5497

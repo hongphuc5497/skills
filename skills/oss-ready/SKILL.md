@@ -2,10 +2,9 @@
 name: oss-ready
 description: "Transform a project into a professional open-source repository by adding LICENSE, README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, and GitHub issue/PR templates. Don't use for documentation overhauls, landing-page generation, or registry publishing."
 license: MIT
-effort: low
 metadata:
   version: 1.2.0
-  author: Luong NGUYEN <luongnv89@gmail.com>
+  author: hongphuc5497
 ---
 
 # OSS Ready

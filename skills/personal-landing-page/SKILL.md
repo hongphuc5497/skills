@@ -2,7 +2,6 @@
 name: personal-landing-page
 description: "Update and deploy the personal landing page at hongphuc5497.com — Next.js 16 + Tailwind 4 on Vercel + Route 53."
 license: MIT
-effort: high
 metadata:
   version: 1.0.0
   author: hongphuc5497

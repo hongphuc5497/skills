@@ -2,7 +2,6 @@
 name: wiki-rag-pipeline
 description: "RAG pipeline for Obsidian wiki — QMD semantic search, score fallback context assembly. Supports wiki queries and knowledge distillation (LLM Wiki pattern)."
 license: MIT
-effort: high
 metadata:
   version: 1.0.0
   author: hongphuc5497

@@ -2,7 +2,6 @@
 name: github-trending-digest
 description: "Automate GitHub Trending digest — fetch trending repos, summarize with LLM, format HTML, and publish to Substack. Cron M/W/F 9AM."
 license: MIT
-effort: medium
 metadata:
   version: 1.0.0
   author: hongphuc5497

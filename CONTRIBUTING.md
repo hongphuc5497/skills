@@ -57,4 +57,4 @@ description: Clear description of what the skill does and when to use it
 
 ## Attribution
 
-Skills curated from [luongnv89/skills](https://github.com/luongnv89/skills) retain original author credit in their frontmatter.
+Skill source files in this collection are MIT licensed. See individual SKILL.md frontmatter for author details.

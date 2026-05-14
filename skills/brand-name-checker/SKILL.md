@@ -2,10 +2,9 @@
 name: brand-name-checker
 description: "Check product and brand names for conflicts across trademarks, domains, social handles, and package registries. Returns a risk level and Proceed/Modify/Abandon recommendation. Skip for name brainstorming, logo design, or trademark filings."
 license: MIT
-effort: max
 metadata:
   version: 1.3.0
-  author: Luong NGUYEN <luongnv89@gmail.com>
+  author: hongphuc5497
 ---
 
 # Brand Name Checker

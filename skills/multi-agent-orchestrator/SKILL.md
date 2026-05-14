@@ -2,7 +2,6 @@
 name: multi-agent-orchestrator
 description: "Orchestrate work across multiple AI coding agents (Hermes, Codex, Claude Code) — delegate tasks in parallel, merge results, coordinate complex workflows."
 license: MIT
-effort: max
 metadata:
   version: 1.0.0
   author: hongphuc5497

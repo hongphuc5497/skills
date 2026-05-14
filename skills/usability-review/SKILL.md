@@ -2,10 +2,9 @@
 name: usability-review
 description: "Review UI for usability issues using Steve Krug's principles and produce a scannable report. Use when asked for a usability audit, UX review, or UI feedback on screenshots, URLs, or code. Don't use for visual/brand design critique, accessibility (WCAG) audits, or backend/API review."
 license: MIT
-effort: medium
 metadata:
   version: 1.2.0
-  author: Luong NGUYEN <luongnv89@gmail.com>
+  author: hongphuc5497
 ---
 
 # Don't Make Me Think — Usability Review & Redesign

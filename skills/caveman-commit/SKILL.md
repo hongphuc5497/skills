@@ -2,7 +2,6 @@
 name: caveman-commit
 description: "Ultra-compressed commit message generator following caveman communication style. Cuts noise from PR descriptions and commit logs."
 license: MIT
-effort: low
 metadata:
   version: 1.0.0
   author: hongphuc5497

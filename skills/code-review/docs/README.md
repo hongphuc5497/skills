@@ -77,13 +77,13 @@ Three agent files coordinate to handle large code audits efficiently:
 Install via [npx (Vercel)](https://www.npmjs.com/package/skills):
 
 ```bash
-npx skills add https://github.com/luongnv89/skills --skill code-review
+npx skills add https://github.com/hongphuc5497/skills --skill code-review
 ```
 
 Or via [agent-skill-manager (asm)](https://www.npmjs.com/package/agent-skill-manager):
 
 ```bash
-asm install github:luongnv89/skills:skills/code-review
+asm install github:hongphuc5497/skills:skills/code-review
 ```
 
 ## Usage

@@ -2,10 +2,9 @@
 name: code-optimizer
 description: "Analyze code for performance bottlenecks, memory leaks, and algorithmic inefficiencies. Use when asked to optimize, find bottlenecks, or improve efficiency. Don't use for bug-hunting code review, security audits, or refactoring without a perf goal."
 license: MIT
-effort: medium
 metadata:
   version: 1.3.1
-  author: Luong NGUYEN <luongnv89@gmail.com>
+  author: hongphuc5497
 ---
 
 # Code Optimization
