@@ -4,11 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - '**.md'
+      - "**.md"
+      - ".markdownlint-cli2.jsonc"
   pull_request:
     branches: [main]
     paths:
-      - '**.md'
+      - "**.md"
   workflow_dispatch:
 
 jobs:
@@ -20,15 +21,5 @@ jobs:
       - name: Lint markdown
         uses: DavidAnson/markdownlint-cli2-action@v19
         with:
-          globs: '**/*.md'
-          config: |
-            {
-              "default": true,
-              "line-length": false,
-              "no-inline-html": { "allowed_elements": ["img", "br", "p", "a", "details", "summary", "b", "pre", "code"] },
-              "no-duplicate-heading": false,
-              "no-bare-urls": false,
-              "first-line-heading": false,
-              "single-trailing-newline": true
-            }
+          globs: "**/*.md"
           fix: false
