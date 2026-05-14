@@ -4,6 +4,7 @@ description: "Review UI for usability issues using Steve Krug's principles and p
 license: MIT
 metadata:
   version: 1.2.0
+  category: general
   author: hongphuc5497
 ---
 

@@ -4,6 +4,7 @@ description: "RAG pipeline for Obsidian wiki — QMD semantic search, score fall
 license: MIT
 metadata:
   version: 1.0.0
+  category: tailored
   author: hongphuc5497
 ---
 

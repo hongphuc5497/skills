@@ -4,6 +4,7 @@ description: "Fine-tune Gemma models via Unsloth on macOS — dataset prep, trai
 license: MIT
 metadata:
   version: 1.0.0
+  category: tailored
   author: hongphuc5497
 ---
 

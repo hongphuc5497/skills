@@ -4,6 +4,7 @@ description: "Generate Product Requirements Documents from `idea.md` and `valida
 license: MIT
 metadata:
   version: 1.3.1
+  category: general
   author: hongphuc5497
 ---
 

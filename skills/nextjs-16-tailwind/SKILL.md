@@ -4,6 +4,7 @@ description: "Build Next.js 16 + Tailwind CSS 4 pages following App Router patte
 license: MIT
 metadata:
   version: 1.0.0
+  category: tailored
   author: hongphuc5497
 ---
 

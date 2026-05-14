@@ -4,6 +4,7 @@ description: "Evaluate app ideas and startup concepts across market viability, t
 license: MIT
 metadata:
   version: 1.3.1
+  category: general
   author: hongphuc5497
 ---
 

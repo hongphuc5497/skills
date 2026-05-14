@@ -4,6 +4,7 @@ description: "Transform a project into a professional open-source repository by 
 license: MIT
 metadata:
   version: 1.2.0
+  category: general
   author: hongphuc5497
 ---
 

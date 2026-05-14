@@ -4,6 +4,7 @@ description: "Audit and optimize websites for technical SEO, content SEO, and AI
 license: MIT
 metadata:
   version: 1.2.0
+  category: general
   author: hongphuc5497
 ---
 

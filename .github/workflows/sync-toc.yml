@@ -1,0 +1,35 @@
+name: Sync TOC
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - skills/**/SKILL.md
+      - scripts/sync_toc.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Sync catalog
+        run: python3 scripts/sync_toc.py
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: sync skill catalog from SKILL.md frontmatter"
+          file_pattern: README.md

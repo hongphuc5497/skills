@@ -4,6 +4,7 @@ description: "Generate and restructure project documentation into a clear, acces
 license: MIT
 metadata:
   version: 1.2.3
+  category: general
   author: hongphuc5497
 ---
 

@@ -4,6 +4,7 @@ description: "Generate development tasks from a PRD file with sprint-based plann
 license: MIT
 metadata:
   version: 1.2.1
+  category: general
   author: hongphuc5497
 ---
 

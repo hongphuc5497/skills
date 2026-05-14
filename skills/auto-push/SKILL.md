@@ -4,6 +4,7 @@ description: "Generate a commit message, stage all changes, and push to remote a
 license: MIT
 metadata:
   version: 1.0.2
+  category: general
   author: hongphuc5497
 ---
 

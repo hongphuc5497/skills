@@ -4,6 +4,7 @@ description: "Fetch current API/SDK docs before writing integration code. Use wh
 license: MIT
 metadata:
   version: 1.0.0
+  category: general
   author: hongphuc5497
 ---
 

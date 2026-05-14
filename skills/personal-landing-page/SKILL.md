@@ -4,6 +4,7 @@ description: "Update and deploy the personal landing page at hongphuc5497.com â€
 license: MIT
 metadata:
   version: 1.0.0
+  category: tailored
   author: hongphuc5497
 ---
 

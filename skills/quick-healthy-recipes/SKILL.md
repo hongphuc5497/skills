@@ -4,6 +4,7 @@ description: "Generate exactly 3 simple, fast, healthy recipes from food photos,
 license: MIT
 metadata:
   version: 1.0.0
+  category: general
   author: hongphuc5497
 ---
 

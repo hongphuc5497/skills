@@ -67,38 +67,42 @@ curl -sSL https://raw.githubusercontent.com/hongphuc5497/skills/main/remote-inst
 
 Standalone, well-tested skills for common development workflows.
 
+<!-- TOC:START:GENERAL -->
 | Skill | What it does |
 |---|---|
-| [**code-review**](skills/code-review/) | Reviews based on Code Smells + The Pragmatic Programmer. Structured reports by severity |
-| [**auto-push**](skills/auto-push/) | Stage, commit, push with secret and large-file detection |
-| [**code-optimizer**](skills/code-optimizer/) | Finds bottlenecks, memory leaks, caching gaps, concurrency issues |
-| [**usability-review**](skills/usability-review/) | Usability reviews using Krug's principles with visual scorecards |
-| [**docs-generator**](skills/docs-generator/) | Restructure scattered docs into a coherent hierarchy |
-| [**seo-ai-optimizer**](skills/seo-ai-optimizer/) | Technical SEO, structured data, and AI bot accessibility |
-| [**oss-ready**](skills/oss-ready/) | LICENSE, CONTRIBUTING, CODE_OF_CONDUCT, GitHub templates |
-| [**security-setup**](skills/security-setup/) | Local-first security hardening with pre-commit hooks, offline scanners |
-| [**idea-validator**](skills/idea-validator/) | Feasibility and market viability feedback before you build |
-| [**brand-name-checker**](skills/brand-name-checker/) | Trademark, domain, social, npm, PyPI, Homebrew — one pass |
-| [**prd-generator**](skills/prd-generator/) | Structured PRDs from a description or validated idea |
-| [**tasks-generator**](skills/tasks-generator/) | Sprint-ready task breakdowns from your PRD |
-| [**release-manager**](skills/release-manager/) | Version bump, changelog, tags, GitHub release, PyPI/npm publish |
-| [**context-hub**](skills/context-hub/) | Fetch current API/SDK docs before writing integration code |
-| [**quick-healthy-recipes**](skills/quick-healthy-recipes/) | Three simple, fast, healthy recipes from food photos or ingredients |
+| [**auto-push**](skills/auto-push/) | Generate a commit message, stage all changes, and push to remote after scanning for secrets, large files, and protect... |
+| [**brand-name-checker**](skills/brand-name-checker/) | Check product and brand names for conflicts across trademarks, domains, social handles, and package registries. Retur... |
+| [**code-optimizer**](skills/code-optimizer/) | Analyze code for performance bottlenecks, memory leaks, and algorithmic inefficiencies. Use when asked to optimize, f... |
+| [**code-review**](skills/code-review/) | Review code changes for bugs, security vulnerabilities, and code quality issues — producing prioritized findings with... |
+| [**context-hub**](skills/context-hub/) | Fetch current API/SDK docs before writing integration code. Use whenever writing code that integrates with an externa... |
+| [**docs-generator**](skills/docs-generator/) | Generate and restructure project documentation into a clear, accessible hierarchy. Use when asked to organize docs, g... |
+| [**idea-validator**](skills/idea-validator/) | Evaluate app ideas and startup concepts across market viability, technical feasibility, and competitive landscape. Us... |
+| [**oss-ready**](skills/oss-ready/) | Transform a project into a professional open-source repository by adding LICENSE, README, CONTRIBUTING, CODE_OF_CONDU... |
+| [**prd-generator**](skills/prd-generator/) | Generate Product Requirements Documents from `idea.md` and `validate.md` files. Use when asked to create or update a ... |
+| [**quick-healthy-recipes**](skills/quick-healthy-recipes/) | Generate exactly 3 simple, fast, healthy recipes from food photos, ingredient lists, or cravings. Use for what-to-coo... |
+| [**release-manager**](skills/release-manager/) | Manage software releases end-to-end: bump version, generate changelog, tag, push, GitHub release, publish to PyPI/npm... |
+| [**security-setup**](skills/security-setup/) | Install local-first security hardening: pre-commit secret detection, offline dependency scans, static analysis, repor... |
+| [**seo-ai-optimizer**](skills/seo-ai-optimizer/) | Audit and optimize websites for technical SEO, content SEO, and AI bot accessibility. Fixes meta tags, sitemaps, robo... |
+| [**tasks-generator**](skills/tasks-generator/) | Generate development tasks from a PRD file with sprint-based planning. Use when users ask to create tasks from PRD, b... |
+| [**usability-review**](skills/usability-review/) | Review UI for usability issues using Steve Krug's principles and produce a scannable report. Use when asked for a usa... |
+<!-- TOC:END:GENERAL -->
 
 ### 🔧 Tailored Skills (hongphuc5497)
 
 Personal skills built for my specific stack and workflows.
 
+<!-- TOC:START:TAILORED -->
 | Skill | What it does |
 |---|---|
-| [**nextjs-16-tailwind**](skills/nextjs-16-tailwind/) | Build Next.js 16 + Tailwind CSS 4 pages following App Router patterns and Tailwind 4 v4 API conventions |
-| [**github-trending-digest**](skills/github-trending-digest/) | Automate GitHub Trending digest — fetch, summarize, publish to Substack |
-| [**fine-tuning-gemma**](skills/fine-tuning-gemma/) | Fine-tune Gemma models via Unsloth on macOS — dataset prep, training, evaluation |
-| [**wiki-rag-pipeline**](skills/wiki-rag-pipeline/) | RAG pipeline for Obsidian wiki — QMD semantic search, score fallback, context assembly |
-| [**personal-landing-page**](skills/personal-landing-page/) | Update and deploy the personal landing page on Vercel + Route 53 |
-| [**multi-agent-orchestrator**](skills/multi-agent-orchestrator/) | Delegate tasks across Hermes, Codex, and Claude Code agents in parallel |
-| [**hermes-config**](skills/hermes-config/) | Configure Hermes Agent — providers, models, tools, skills, voice |
-| [**caveman-commit**](skills/caveman-commit/) | Ultra-compressed commit messages. Cuts noise from PR descriptions |
+| [**caveman-commit**](skills/caveman-commit/) | Ultra-compressed commit message generator following caveman communication style. Cuts noise from PR descriptions and ... |
+| [**fine-tuning-gemma**](skills/fine-tuning-gemma/) | Fine-tune Gemma models via Unsloth on macOS — dataset prep, training, evaluation. Currently configured for Gemma 4 E4... |
+| [**github-trending-digest**](skills/github-trending-digest/) | Automate GitHub Trending digest — fetch trending repos, summarize with LLM, format HTML, and publish to Substack. Cro... |
+| [**hermes-config**](skills/hermes-config/) | Configure Hermes Agent — providers, models, tools, skills, voice, gateway, plugins. Uses hermes CLI commands, not gue... |
+| [**multi-agent-orchestrator**](skills/multi-agent-orchestrator/) | Orchestrate work across multiple AI coding agents (Hermes, Codex, Claude Code) — delegate tasks in parallel, merge re... |
+| [**nextjs-16-tailwind**](skills/nextjs-16-tailwind/) | Build Next.js 16 + Tailwind CSS 4 pages following App Router patterns and Tailwind CSS v4 API conventions. Use for cr... |
+| [**personal-landing-page**](skills/personal-landing-page/) | Update and deploy the personal landing page at hongphuc5497.com — Next.js 16 + Tailwind 4 on Vercel + Route 53. |
+| [**wiki-rag-pipeline**](skills/wiki-rag-pipeline/) | RAG pipeline for Obsidian wiki — QMD semantic search, score fallback context assembly. Supports wiki queries and know... |
+<!-- TOC:END:TAILORED -->
 
 <details>
 <summary><b>Supported Tool Paths</b></summary>

@@ -4,6 +4,7 @@ description: "Review code changes for bugs, security vulnerabilities, and code q
 license: MIT
 metadata:
   version: 1.1.4
+  category: general
   author: hongphuc5497
   architecture: "subagent (Pattern B+C: Parallel Workers + Review Loop)"
 ---

@@ -4,6 +4,7 @@ description: "Ultra-compressed commit message generator following caveman commun
 license: MIT
 metadata:
   version: 1.0.0
+  category: tailored
   author: hongphuc5497
 ---
 

@@ -4,6 +4,7 @@ description: "Check product and brand names for conflicts across trademarks, dom
 license: MIT
 metadata:
   version: 1.3.0
+  category: general
   author: hongphuc5497
 ---
 

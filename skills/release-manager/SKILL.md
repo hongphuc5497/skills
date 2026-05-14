@@ -4,6 +4,7 @@ description: "Manage software releases end-to-end: bump version, generate change
 license: MIT
 metadata:
   version: 2.4.1
+  category: general
   author: hongphuc5497
 ---
 

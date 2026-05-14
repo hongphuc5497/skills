@@ -4,6 +4,7 @@ description: "Analyze code for performance bottlenecks, memory leaks, and algori
 license: MIT
 metadata:
   version: 1.3.1
+  category: general
   author: hongphuc5497
 ---
 
