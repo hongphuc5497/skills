@@ -1,0 +1,23 @@
+{
+  "skill_name": "quick-healthy-recipes",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have Swiss chard from the market. Find me the best recipe to cook it tonight.",
+      "expected_output": "Exactly 3 simple, fast, healthy recipes using Swiss chard, with the fastest/practical option first and common extra ingredients only.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I have eggs, rice, carrots, and tofu. What can I cook quickly and healthy?",
+      "expected_output": "Exactly 3 balanced weeknight recipes using the provided ingredients, no special equipment, each with short steps and healthy balance notes.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Here is a photo of some leafy greens. What should I cook?",
+      "expected_output": "The agent inspects or acknowledges the image, states any uncertainty, then gives exactly 3 simple, fast, healthy recipe options with safe assumptions.",
+      "files": []
+    }
+  ]
+}
