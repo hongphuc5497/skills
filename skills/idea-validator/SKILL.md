@@ -2,10 +2,10 @@
 name: idea-validator
 description: "Evaluate app ideas and startup concepts across market viability, technical feasibility, and competitive landscape. Use when asked to validate, review, or score a product idea. Don't use for writing a PRD, detailed go-to-market plans, or financial/investor pitch decks."
 license: MIT
+effort: max
 metadata:
   version: 1.3.1
-  category: general
-  author: hongphuc5497
+  author: Luong NGUYEN <luongnv89@gmail.com>
 ---
 
 # Idea Validator

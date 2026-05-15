@@ -1,13 +1,10 @@
 ---
 name: caveman-review
 description: >
-  Ultra-compressed code review comments. Cuts noise from PR feedback while preserving the actionable signal. Each comment is one line: location, problem, fix. Use when user says "review this PR", "code review", "review the diff", "/review", or invok...
-license: MIT
-metadata:
-  version: 1.0.0
-  author: hongphuc5497
-  category: tailored
----
+  Ultra-compressed code review comments. Cuts noise from PR feedback while preserving
+  the actionable signal. Each comment is one line: location, problem, fix. Use when user
+  says "review this PR", "code review", "review the diff", "/review", or invokes
+  /caveman-review. Auto-triggers when reviewing pull requests.
 ---
 
 Write code review comments terse and actionable. One line per finding. Location, problem, fix. No throat-clearing.
@@ -52,31 +49,6 @@ Write code review comments terse and actionable. One line per finding. Location,
 ## Auto-Clarity
 
 Drop terse mode for: security findings (CVE-class bugs need full explanation + reference), architectural disagreements (need rationale, not just a one-liner), and onboarding contexts where the author is new and needs the "why". In those cases write a normal paragraph, then resume terse for the rest.
-
-## Expected Output
-
-One line per finding. Format: `L<line>: <severity>: <problem>. <fix>.`
-
-```
-L42: bug: user null after .find(). Add optional chaining.
-L88: risk: no retry on 429. Wrap withBackoff(3).
-L120: nit: 50-line fn. Extract validate/normalize/persist.
-```
-
-## Edge Cases
-
-- **Empty diff / no changes**: Output "No findings."
-- **File not found or unreadable**: Report which file failed and skip it.
-- **Binary files in diff**: Skip binary files, note they were skipped.
-- **Generated code in diff**: Flag generated files but skip detailed review unless explicitly asked.
-- **Mixed severity findings**: Group by file, ordered by severity (bug > risk > nit > q).
-
-## Acceptance Criteria
-
-- Every finding has a line number, problem statement, and concrete fix.
-- Severity prefixes used when findings mix severity levels.
-- No "I noticed", "It seems", or hedging language.
-- Security findings expanded to full explanation regardless of caveman mode.
 
 ## Boundaries
 

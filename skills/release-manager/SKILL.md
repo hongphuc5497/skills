@@ -2,10 +2,10 @@
 name: release-manager
 description: "Manage software releases end-to-end: bump version, generate changelog, tag, push, GitHub release, publish to PyPI/npm. Use when user asks to ship, cut a release, tag a version, or list changes since last tag. Skip routine commits and marketplace publishing."
 license: MIT
+effort: max
 metadata:
   version: 2.4.1
-  category: general
-  author: hongphuc5497
+  author: Luong NGUYEN <luongnv89@gmail.com>
 ---
 
 # Release Manager
