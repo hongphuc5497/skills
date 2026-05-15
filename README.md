@@ -95,13 +95,8 @@ Personal skills built for my specific stack and workflows.
 | Skill | What it does |
 |---|---|
 | [**caveman-commit**](skills/caveman-commit/) | Ultra-compressed commit message generator following caveman communication style. Cuts noise from PR descriptions and ... |
-| [**fine-tuning-gemma**](skills/fine-tuning-gemma/) | Fine-tune Gemma models via Unsloth on macOS — dataset prep, training, evaluation. Currently configured for Gemma 4 E4... |
-| [**github-trending-digest**](skills/github-trending-digest/) | Automate GitHub Trending digest — fetch trending repos, summarize with LLM, format HTML, and publish to Substack. Cro... |
 | [**hermes-config**](skills/hermes-config/) | Configure Hermes Agent — providers, models, tools, skills, voice, gateway, plugins. Uses hermes CLI commands, not gue... |
 | [**multi-agent-orchestrator**](skills/multi-agent-orchestrator/) | Orchestrate work across multiple AI coding agents (Hermes, Codex, Claude Code) — delegate tasks in parallel, merge re... |
-| [**nextjs-16-tailwind**](skills/nextjs-16-tailwind/) | Build Next.js 16 + Tailwind CSS 4 pages following App Router patterns and Tailwind CSS v4 API conventions. Use for cr... |
-| [**personal-landing-page**](skills/personal-landing-page/) | Update and deploy the personal landing page at hongphuc5497.com — Next.js 16 + Tailwind 4 on Vercel + Route 53. |
-| [**wiki-rag-pipeline**](skills/wiki-rag-pipeline/) | RAG pipeline for Obsidian wiki — QMD semantic search, score fallback context assembly. Supports wiki queries and know... |
 <!-- TOC:END:TAILORED -->
 
 <details>
@@ -129,7 +124,7 @@ Personal skills built for my specific stack and workflows.
 │   │   ├── references/
 │   │   └── scripts/
 │   ├── auto-push/
-│   └── nextjs-16-tailwind/
+│   └── prd-generator/
 │       ├── SKILL.md
 │       └── references/
 ├── assets/              # Logo, images
