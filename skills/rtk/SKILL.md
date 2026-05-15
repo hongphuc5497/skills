@@ -1,6 +1,6 @@
 ---
 name: rtk
-description: "RTK (Rust Token Killer) — token-optimized CLI proxy that compresses noisy shell command output by 60-90%. Use when piping commands through rtk for token savings, checking rtk gain stats, or discovering missed compression opportunities."
+description: "RTK (Rust Token Killer) — CLI proxy that compresses noisy shell output by 60-90%. Use when piping commands through rtk for token savings. Not for interactive commands (REPLs, prompts), shell composition, or when exact stdout/stderr is needed."
 license: MIT
 metadata:
   version: 1.0.0
@@ -62,8 +62,6 @@ rtk json              # JSON output compressed
 
 ## Token Savings
 
-Typical compression: 60-90% reduction depending on command type:
-
 | Command | Raw tokens | RTK tokens | Savings |
 |---------|-----------|------------|---------|
 | `git status` | ~500 | ~80 | 84% |
@@ -76,7 +74,19 @@ Typical compression: 60-90% reduction depending on command type:
 
 RTK compresses **tool output** (shell commands). Caveman compresses **conversation** (your responses). Together: full token optimization stack.
 
-```
-shell output → rtk → agent sees compressed output
-agent reply  → caveman → user sees terse response
-```
+## Expected Output
+
+Compressed command output with the signal preserved. The exact output shape depends on the command — RTK strips noise (progress bars, repeated patterns, verbose headers) and keeps the signal (errors, results, summaries).
+
+## Edge Cases
+
+- **Zero-length output**: Shows nothing. Rerun with `rtk proxy` to debug.
+- **Command errors**: Error messages are preserved (not compressed).
+- **Binary/encoded output**: Pass through unchanged.
+- **rtk not installed**: Error message with install instructions.
+
+## Acceptance Criteria
+
+- Signal preserved (errors, warnings, test failures, build errors).
+- Noise stripped (progress bars, repeated patterns, verbose headers).
+- Savings measurable via `rtk gain`.
