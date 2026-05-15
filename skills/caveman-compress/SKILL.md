@@ -1,26 +1,44 @@
 ---
 name: caveman-compress
-description: "Compress natural language files (CLAUDE.md, AGENTS.md, todos, preferences) into caveman format to save input tokens. Preserves all technical substance, code, URLs, and structure. Backup saved as FILE.original.md. Use when user wants to compress a memory/context file."
-license: MIT
+description: >
+  Compress natural language memory files (CLAUDE.md, todos, preferences) into caveman format
+  to save input tokens. Preserves all technical substance, code, URLs, and structure.
+  Compressed version overwrites the original file. Human-readable backup saved as FILE.original.md.
+  Trigger: /caveman-compress FILEPATH or "compress memory file"license: MIT
 metadata:
   version: 1.0.0
   author: hongphuc5497
   category: tailored
+---
 ---
 
 # Caveman Compress
 
 ## Purpose
 
-Compress natural language files (CLAUDE.md, AGENTS.md, todos, preferences) into caveman-speak to reduce input tokens. Compressed version overwrites original. Human-readable backup saved as `<filename>.original.md`.
+Compress natural language files (CLAUDE.md, todos, preferences) into caveman-speak to reduce input tokens. Compressed version overwrites original. Human-readable backup saved as `<filename>.original.md`.
+
+## Trigger
+
+`/caveman-compress <filepath>` or when user asks to compress a memory file.
 
 ## Process
 
-1. Locate the target file. Validate it's a natural language file (.md, .txt, or extensionless).
-2. Create backup: copy to `<filepath>.original.md`.
-3. Read the file content.
-4. Apply compression rules below to rewrite content preserving all structure and code.
-5. Write compressed content back to original path.
+1. The compression scripts live in `scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `scripts/__main__.py` next to this SKILL.md.
+
+2. From the directory containing this SKILL.md, run:
+
+python3 -m scripts <absolute_filepath>
+
+3. The CLI will:
+- detect file type (no tokens)
+- call Claude to compress
+- validate output (no tokens)
+- if errors: cherry-pick fix with Claude (targeted fixes only, no recompression)
+- retry up to 2 times
+- if still failing after 2 retries: report error to user, leave original file untouched
+
+4. Return result to user
 
 ## Compression Rules
 
@@ -57,9 +75,40 @@ Compress natural language files (CLAUDE.md, AGENTS.md, todos, preferences) into 
 - Merge redundant bullets that say the same thing differently
 - Keep one example where multiple examples show the same pattern
 
+CRITICAL RULE:
+Anything inside ``` ... ``` must be copied EXACTLY.
+Do not:
+- remove comments
+- remove spacing
+- reorder lines
+- shorten commands
+- simplify anything
+
+Inline code (`...`) must be preserved EXACTLY.
+Do not modify anything inside backticks.
+
+If file contains code blocks:
+- Treat code blocks as read-only regions
+- Only compress text outside them
+- Do not merge sections around code
+
+## Pattern
+
+Original:
+> You should always make sure to run the test suite before pushing any changes to the main branch. This is important because it helps catch bugs early and prevents broken builds from being deployed to production.
+
+Compressed:
+> Run tests before push to main. Catch bugs early, prevent broken prod deploys.
+
+Original:
+> The application uses a microservices architecture with the following components. The API gateway handles all incoming requests and routes them to the appropriate service. The authentication service is responsible for managing user sessions and JWT tokens.
+
+Compressed:
+> Microservices architecture. API gateway route all requests to services. Auth service manage user sessions + JWT tokens.
+
 ## Boundaries
 
-- ONLY compress natural language files (.md, .txt, extensionless)
+- ONLY compress natural language files (.md, .txt, .typ, .typst, .tex, extensionless)
 - NEVER modify: .py, .js, .ts, .json, .yaml, .yml, .toml, .env, .lock, .css, .html, .xml, .sql, .sh
 - If file has mixed content (prose + code), compress ONLY the prose sections
 - If unsure whether something is code or prose, leave it unchanged

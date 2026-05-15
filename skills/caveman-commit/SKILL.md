@@ -1,62 +1,70 @@
 ---
 name: caveman-commit
-description: "Ultra-compressed commit message generator following caveman communication style. Cuts noise from PR descriptions and commit logs."
-license: MIT
+description: >
+  Ultra-compressed commit message generator. Cuts noise from commit messages while preserving
+  intent and reasoning. Conventional Commits format. Subject ≤50 chars, body only when "why"
+  isn't obvious. Use when user says "write a commit", "commit message", "generate commit",
+  "/commit", or invokes /caveman-commit. Auto-triggers when staging changes.license: MIT
 metadata:
   version: 1.0.0
-  category: tailored
   author: hongphuc5497
+  category: tailored
+---
 ---
 
-# Caveman Commit
+Write commit messages terse and exact. Conventional Commits format. No fluff. Why over what.
 
-Generate ultra-compressed commit messages in caveman style.
+## Rules
 
-## When to Use
+**Subject line:**
+- `<type>(<scope>): <imperative summary>` — `<scope>` optional
+- Types: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `build`, `ci`, `style`, `revert`
+- Imperative mood: "add", "fix", "remove" — not "added", "adds", "adding"
+- ≤50 chars when possible, hard cap 72
+- No trailing period
+- Match project convention for capitalization after the colon
 
-Use when the user asks to commit, write a commit message, or says "caveman commit". Trigger on phrases like "caveman commit", "short message", "terse commit", "minimal commit".
+**Body (only if needed):**
+- Skip entirely when subject is self-explanatory
+- Add body only for: non-obvious *why*, breaking changes, migration notes, linked issues
+- Wrap at 72 chars
+- Bullets `-` not `*`
+- Reference issues/PRs at end: `Closes #42`, `Refs #17`
 
-## Style Guide
+**What NEVER goes in:**
+- "This commit does X", "I", "we", "now", "currently" — the diff says what
+- "As requested by..." — use Co-authored-by trailer
+- "Generated with Claude Code" or any AI attribution
+- Emoji (unless project convention requires)
+- Restating the file name when scope already says it
 
-Caveman-lite: terse, no filler/pleasantries/hedging, fragment OK.
+## Examples
 
-Examples:
+Diff: new endpoint for user profile with body explaining the why
+- ❌ "feat: add a new endpoint to get user profile information from the database"
+- ✅
+  ```
+  feat(api): add GET /users/:id/profile
 
-```
-feat: add RSS feed generation
-→ "feat: RSS feed gen"
+  Mobile client needs profile data without the full user payload
+  to reduce LTE bandwidth on cold-launch screens.
 
-fix: resolve memory leak in batch processor
-→ "fix: memory leak in batch proc"
+  Closes #128
+  ```
 
-docs: update API reference for v2 endpoints
-→ "docs: API ref v2"
-```
+Diff: breaking API change
+- ✅
+  ```
+  feat(api)!: rename /v1/orders to /v1/checkout
 
-## Ultra mode (for full compression)
+  BREAKING CHANGE: clients on /v1/orders must migrate to /v1/checkout
+  before 2026-06-01. Old route returns 410 after that date.
+  ```
 
-Drop articles (a/an/the), use abbreviations, single-word where possible:
+## Auto-Clarity
 
-```
-fix: resolve issue with null pointer exception in user authentication when session expires
-→ "fix: null ptr in auth on session expiry"
-```
+Always include body for: breaking changes, security fixes, data migrations, anything reverting a prior commit. Never compress these into subject-only — future debuggers need the context.
 
-## Instructions
+## Boundaries
 
-1. Read `git diff --cached` or check staged files context
-2. Generate a conventional commit title (max 72 chars)
-3. Apply caveman compression:
-   - Remove articles (a/an/the)
-   - Use abbreviations (feat→feat, fix→fix, docs→docs)
-   - Drop filler words (actually, basically, literally)
-   - Use short synonyms (add→add, fix→fix, remove→rm)
-   - Fragments OK for body
-4. Keep conventional commit prefix: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`
-5. Body (optional): compressed bullet points only if needed
-
-## Caveats
-
-- Don't sacrifice clarity for brevity on security-critical changes
-- Security fixes get full conventional messages
-- Breaking changes: include `!` after prefix + note in body
+Only generates the commit message. Does not run `git commit`, does not stage files, does not amend. Output the message as a code block ready to paste. "stop caveman-commit" or "normal mode": revert to verbose commit style.

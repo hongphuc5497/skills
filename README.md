@@ -94,11 +94,13 @@ Personal skills built for my specific stack and workflows.
 <!-- TOC:START:TAILORED -->
 | Skill | What it does |
 |---|---|
+| [**cavecrew**](skills/cavecrew/) | Decision guide for delegating to caveman-style subagents. Use when the user wants to delegate work to subagents, spaw... |
 | [**caveman**](skills/caveman/) | Ultra-compressed communication mode. Cuts token usage ~75% by speaking like caveman while keeping full technical accu... |
-| [**caveman-commit**](skills/caveman-commit/) | Ultra-compressed commit message generator following caveman communication style. Cuts noise from PR descriptions and ... |
-| [**caveman-compress**](skills/caveman-compress/) | Compress natural language files (CLAUDE.md, AGENTS.md, todos, preferences) into caveman format to save input tokens. ... |
-| [**caveman-help**](skills/caveman-help/) | Quick-reference card for all caveman modes, skills, and commands. One-shot display, not a persistent mode. Use when u... |
-| [**caveman-review**](skills/caveman-review/) | Ultra-compressed code review comments. Cuts noise from PR feedback while preserving actionable signal. Each comment i... |
+| [**caveman-commit**](skills/caveman-commit/) | Ultra-compressed commit message generator. Cuts noise from commit messages while preserving intent and reasoning. Con... |
+| [**caveman-compress**](skills/caveman-compress/) | Compress natural language memory files (CLAUDE.md, todos, preferences) into caveman format to save input tokens. Pres... |
+| [**caveman-help**](skills/caveman-help/) | Quick-reference card for all caveman modes, skills, and commands. One-shot display, not a persistent mode. Trigger: /... |
+| [**caveman-review**](skills/caveman-review/) | Ultra-compressed code review comments. Cuts noise from PR feedback while preserving the actionable signal. Each comme... |
+| [**caveman-stats**](skills/caveman-stats/) | Show token savings from caveman mode. Estimates savings based on communication intensity level vs baseline verbose re... |
 | [**hermes-config**](skills/hermes-config/) | Configure Hermes Agent — providers, models, tools, skills, voice, gateway, plugins. Uses hermes CLI commands, not gue... |
 | [**multi-agent-orchestrator**](skills/multi-agent-orchestrator/) | Orchestrate work across multiple AI coding agents (Hermes, Codex, Claude Code) — delegate tasks in parallel, merge re... |
 | [**rtk**](skills/rtk/) | RTK (Rust Token Killer) — token-optimized CLI proxy that compresses noisy shell command output by 60-90%. Use when pi... |
