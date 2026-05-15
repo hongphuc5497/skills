@@ -101,6 +101,7 @@ Personal skills built for my specific stack and workflows.
 | [**caveman-review**](skills/caveman-review/) | Ultra-compressed code review comments. Cuts noise from PR feedback while preserving actionable signal. Each comment i... |
 | [**hermes-config**](skills/hermes-config/) | Configure Hermes Agent — providers, models, tools, skills, voice, gateway, plugins. Uses hermes CLI commands, not gue... |
 | [**multi-agent-orchestrator**](skills/multi-agent-orchestrator/) | Orchestrate work across multiple AI coding agents (Hermes, Codex, Claude Code) — delegate tasks in parallel, merge re... |
+| [**rtk**](skills/rtk/) | RTK (Rust Token Killer) — token-optimized CLI proxy that compresses noisy shell command output by 60-90%. Use when pi... |
 <!-- TOC:END:TAILORED -->
 
 <details>
