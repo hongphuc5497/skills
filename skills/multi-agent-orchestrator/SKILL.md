@@ -1,11 +1,11 @@
 ---
 name: multi-agent-orchestrator
-description: "Orchestrate work across multiple AI coding agents (Hermes, Codex, Claude Code) — delegate tasks in parallel, merge results, coordinate complex workflows."
+description: "Orchestrate work across multiple AI coding agents (Hermes, Codex, Claude Code) — delegate tasks in parallel, merge results, coordinate complex workflows. Not for simple single-agent tasks, or tasks where agents share mutable state."
 license: MIT
 metadata:
   version: 1.0.0
-  category: tailored
   author: hongphuc5497
+  category: tailored
 ---
 
 # Multi-Agent Orchestrator
@@ -20,24 +20,27 @@ Use when a task benefits from multiple agents working in parallel — different 
 
 | Agent | Primary Use | Model |
 |-------|-------------|-------|
-| **Hermes** | Primary — planning, execution, fine-tuning | DeepSeek V4 Flash |
+| **Hermes** | Primary — planning, execution, fine-tuning | DeepSeek V4 Flash/Pro |
 | **Codex** | Code generation, rapid prototyping | OpenAI Codex |
 | **Claude Code** | Complex reasoning, code review | Claude |
 
 ## Pattern
 
 ### 1. Decompose Task
+
 Split the work into independent sub-tasks that don't share state:
 - Task A: Research/synthesis (Hermes)
 - Task B: Code generation (Codex)
 - Task C: Code review (Claude Code or Hermes)
 
 ### 2. Parallel Execution
+
 Use `delegate_task` with batch mode (`tasks` array, up to 3 concurrent):
 - Each subagent gets its own isolated context + terminal
 - Pass all relevant context explicitly (no memory sharing)
 
 ### 3. Merge & Validate
+
 - Collect results from all subagents
 - Resolve conflicts (prefer Hermes for final decisions)
 - Run validation: typecheck, lint, tests
@@ -51,8 +54,25 @@ Use `delegate_task` with batch mode (`tasks` array, up to 3 concurrent):
 5. Validate merged output
 6. Report final state to user
 
-## Notes
+## Expected Output
 
-- Subagents cannot use `clarify` — don't use for tasks needing user input mid-flight
-- Subagent summaries are self-reports — verify file creation / side effects
-- Leaf subagents cannot delegate further
+Summary of what each agent produced and the merged result:
+```
+Left:  Hermes — research auth middleware options
+Right: Codex  — implemented JWT middleware
+Merge: combined, passes typecheck, 3 tests passing
+```
+
+## Edge Cases
+
+- **One subagent fails**: Report partial results. Merge successful subagents, diagnose the failure.
+- **Conflicting results**: Prefer Hermes for final decisions. Note the conflict in the report.
+- **Subagents timeout**: Report which timed out and partial output if available.
+- **All subagents fail**: Abort, report all errors, suggest sequential single-agent approach.
+
+## Acceptance Criteria
+
+- Each sub-task is genuinely independent (no shared mutable state).
+- All context passed explicitly — no assumption of shared knowledge.
+- Merged output is validated (typecheck/lint/tests).
+- Failure of one agent doesn't block others from completing.

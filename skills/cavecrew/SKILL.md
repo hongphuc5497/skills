@@ -1,13 +1,13 @@
 ---
 name: cavecrew
-description: "Decision guide for delegating to caveman-style subagents. Use when the user wants to delegate work to subagents, spawn parallel workers, save main context, or mentions cavecrew. Not for simple single-file edits the main thread can do directly."
+description: >
+  Decision guide for delegating to caveman-style subagents. Use when the user wants to delegate work to subagents, spawn parallel workers, save main context, or mentions cavecrew. Not for simple single-file edits the main thread can do directly.
 license: MIT
 metadata:
   version: 1.0.0
   author: hongphuc5497
   category: tailored
 ---
-
 # Cavecrew — Caveman Subagent Delegation
 
 Three subagent presets that emit caveman-compressed output. Same job as normal subagents; difference is the tool-result they return is ~60% smaller, so main context lasts longer.
@@ -66,6 +66,30 @@ Output format:
 - Subagent needs to write 3+ files or do cross-cutting changes
 - Multi-step workflows with dependencies between steps
 
-## Boundaries
+## Expected Output
 
-Cavecrew is a decision guide — it tells you WHEN to delegate, not HOW to spawn subagents. The actual delegation mechanism (delegate_task, subagent spawn) is tool-specific. The caveman output format is the key: shorter = more context survives.
+A decision — which subagent preset to use (or main thread). If delegating, also output the subagent type to use.
+
+```
+Subagent: cavecrew-investigator
+Purpose: Find where validateSession() is defined and all callers
+```
+
+```
+Subagent: cavecrew-reviewer
+Purpose: Review diff for bugs
+```
+
+## Edge Cases
+
+- **Task spans multiple categories**: Default to the more narrowly scoped subagent. E.g., "find bug in login code" → reviewer (check for bug), then investigator (find location).
+- **User explicitly requests detailed output**: Use normal subagent, not cavecrew — detailed prose desired.
+- **Security-related debugging**: Always use normal subagent — caveman compression risks hiding nuance.
+- **Subagent count > 3 in parallel**: Still use main thread for orchestration, delegate each sub-task individually.
+
+## Acceptance Criteria
+
+- Decision table used to map task to agent type.
+- When delegation is chosen, output includes agent type AND purpose.
+- When main thread is chosen, output includes brief rationale.
+- Security tasks never delegated to cavecrew subagents without explicit user request.

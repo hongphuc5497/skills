@@ -1,13 +1,13 @@
 ---
 name: caveman-stats
-description: "Show token savings from caveman mode. Estimates savings based on communication intensity level vs baseline verbose responses. Use when user asks about caveman savings, token stats, or how much caveman helps."
+description: >
+  Show token savings from caveman mode. Estimates savings based on communication intensity level vs baseline verbose responses. Use when user asks about caveman savings, token stats, or how much caveman helps. Not for precise token counting or debug...
 license: MIT
 metadata:
   version: 1.0.0
   author: hongphuc5497
   category: tailored
 ---
-
 # Caveman Stats
 
 Estimates token savings from caveman communication mode.
@@ -39,6 +39,25 @@ Verbose response (~200 tokens):
 Caveman full (~70 tokens, -65%):
 > "Auth middleware throws null ptr on expired session. Missing null check before session access. Fix: add `if (!session) return 401`."
 
-## Boundaries
+## Expected Output
 
-This skill describes WHAT caveman saves, not HOW to calculate it from tool logs. For real session-level token tracking, use your agent's built-in token counter.
+Summary of estimated token savings by intensity level with example breakdown. No live session data — estimates based on communication pattern analysis.
+
+```
+Lite:  ~40%  — drop filler, keep sentences
+Full:  ~65%  — drop articles, fragments OK
+Ultra: ~80%  — abbreviations, arrows, one-word
+```
+
+## Edge Cases
+
+- **Session has no caveman usage**: Report "No caveman usage detected in this session."
+- **Mixed intensity levels**: Report per-phase breakdown if phases are distinguishable.
+- **Zero-length response**: Not applicable — caveman only applies to non-empty responses.
+
+## Acceptance Criteria
+
+- Savings estimates clearly labeled as "estimated", not hard data.
+- Intensity levels documented with expected reduction percentages.
+- Example provided showing verbose vs caveman comparison.
+- Note that real token tracking requires agent-specific hooks (caveman-stats.js).

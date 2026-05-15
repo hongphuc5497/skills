@@ -1,10 +1,8 @@
 ---
 name: caveman-commit
 description: >
-  Ultra-compressed commit message generator. Cuts noise from commit messages while preserving
-  intent and reasoning. Conventional Commits format. Subject ≤50 chars, body only when "why"
-  isn't obvious. Use when user says "write a commit", "commit message", "generate commit",
-  "/commit", or invokes /caveman-commit. Auto-triggers when staging changes.license: MIT
+  Ultra-compressed commit message generator. Cuts noise from commit messages while preserving intent and reasoning. Conventional Commits format. Subject ≤50 chars, body only when "why" isn't obvious. Use when user says "write a commit", "commit mess...
+license: MIT
 metadata:
   version: 1.0.0
   author: hongphuc5497
@@ -64,6 +62,33 @@ Diff: breaking API change
 ## Auto-Clarity
 
 Always include body for: breaking changes, security fixes, data migrations, anything reverting a prior commit. Never compress these into subject-only — future debuggers need the context.
+
+## Expected Output
+
+A commit message in conventional commit format. Subject ≤50 chars, body only when "why" isn't obvious.
+
+```
+feat(api): add GET /users/:id/profile
+
+Mobile client needs profile data without full user payload
+to reduce LTE bandwidth on cold-launch screens.
+```
+
+## Edge Cases
+
+- **Breaking change**: Add `!` after type/scope and include `BREAKING CHANGE:` in body.
+- **Security fix**: Always include full explanation in body — never compress.
+- **Multiple unrelated changes**: Prompt user to split into separate commits. Don't generate a combined message.
+- **Revert commit**: Use `revert:` type with standard revert format, include full original subject.
+- **Empty diff / no staged files**: Report "No staged changes found."
+
+## Acceptance Criteria
+
+- Subject line: conventional commit format, imperative mood, ≤72 chars.
+- Body included only when non-obvious "why", breaking changes, or linked issues.
+- No AI attribution, no emoji, no "this commit does X".
+- Breaking changes always documented in body with `BREAKING CHANGE:`.
+- Security fixes always include full explanatory body.
 
 ## Boundaries
 

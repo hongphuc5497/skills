@@ -108,9 +108,32 @@ Compressed:
 
 ## Boundaries
 
-- ONLY compress natural language files (.md, .txt, .typ, .typst, .tex, extensionless)
+- ONLY compress natural language files (.md, .txt, extensionless)
 - NEVER modify: .py, .js, .ts, .json, .yaml, .yml, .toml, .env, .lock, .css, .html, .xml, .sql, .sh
 - If file has mixed content (prose + code), compress ONLY the prose sections
 - If unsure whether something is code or prose, leave it unchanged
 - Original file is backed up as FILE.original.md before overwriting
 - Never compress FILE.original.md (skip it)
+
+## Expected Output
+
+The compressed file written back to original path, with original backed up as `<filename>.original.md`. Report the compression ratio:
+```
+Compressed CLAUDE.md: 3200B → 1750B (45% reduction). Backup at CLAUDE.md.original.md
+```
+
+## Edge Cases
+
+- **File already compressed**: Skip, report "Already compressed."
+- **Backup already exists**: Overwrite with warning.
+- **Empty file or no prose content**: Report "No prose content to compress."
+- **File contains only code blocks**: Leave unchanged, report "Code-only file, no compression needed."
+- **Permission denied**: Report the error, suggest running with appropriate access.
+
+## Acceptance Criteria
+
+- Backup created before any modification.
+- All code blocks, URLs, file paths, technical terms preserved exactly.
+- Prose sections compressed: articles, filler, pleasantries, hedging removed.
+- Compression ratio reported in output.
+- Non-natural-language files untouched.
