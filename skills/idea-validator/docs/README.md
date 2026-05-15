@@ -44,13 +44,13 @@ graph TD
 Install via [npx (Vercel)](https://www.npmjs.com/package/skills):
 
 ```bash
-npx skills add https://github.com/hongphuc5497/skills --skill idea-validator
+npx skills add https://github.com/luongnv89/skills --skill idea-validator
 ```
 
 Or via [agent-skill-manager (asm)](https://www.npmjs.com/package/agent-skill-manager):
 
 ```bash
-asm install github:hongphuc5497/skills:skills/idea-validator
+asm install github:luongnv89/skills:skills/idea-validator
 ```
 
 ## Usage

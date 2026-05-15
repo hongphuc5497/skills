@@ -2,10 +2,10 @@
 name: quick-healthy-recipes
 description: "Generate exactly 3 simple, fast, healthy recipes from food photos, ingredient lists, or cravings. Use for what-to-cook-tonight requests. Don't use for restaurants, meal plans, baking, or medical diets."
 license: MIT
+effort: medium
 metadata:
   version: 1.0.0
-  category: general
-  author: hongphuc5497
+  author: "Luong NGUYEN <luongnv89@gmail.com>"
 ---
 
 # Quick Healthy Recipes

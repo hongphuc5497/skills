@@ -1,95 +1,82 @@
 ---
 name: cavecrew
 description: >
-  Decision guide for delegating to caveman-style subagents. Use when the user wants to delegate work to subagents, spawn parallel workers, save main context, or mentions cavecrew. Not for simple single-file edits the main thread can do directly.
-license: MIT
-metadata:
-  version: 1.0.0
-  author: hongphuc5497
-  category: tailored
+  Decision guide for delegating to caveman-style subagents. Tells the main
+  thread WHEN to spawn `cavecrew-investigator` (locate code), `cavecrew-builder`
+  (1-2 file edit), or `cavecrew-reviewer` (diff review) instead of doing the
+  work inline or using vanilla `Explore`. Subagent output is caveman-compressed
+  so the tool-result injected back into main context is ~60% smaller — main
+  context lasts longer across long sessions.
+  Trigger: "delegate to subagent", "use cavecrew", "spawn investigator/builder/reviewer",
+  "save context", "compressed agent output".
 ---
-# Cavecrew — Caveman Subagent Delegation
 
-Three subagent presets that emit caveman-compressed output. Same job as normal subagents; difference is the tool-result they return is ~60% smaller, so main context lasts longer.
+Cavecrew = three subagent presets that emit caveman output. Same job as Anthropic defaults (`Explore`, edit-style agents, reviewer); difference is the tool-result they return is compressed, so main context shrinks per delegation.
 
-## When to use cavecrew vs main thread
+## When to use cavecrew vs alternatives
 
 | Task | Use |
 |---|---|
-| "Where is X defined / what calls Y / list uses of Z" | **cavecrew-investigator** |
-| Same but you also want suggestions/architecture commentary | Normal subagent |
-| Surgical edit, ≤2 files, scope obvious | **cavecrew-builder** |
-| New feature / 3+ files / cross-cutting refactor | Main thread |
-| Review diff, branch, or file for bugs | **cavecrew-reviewer** |
-| Deep code review with rationale + alternatives | Normal subagent |
+| "Where is X defined / what calls Y / list uses of Z" | `cavecrew-investigator` |
+| Same but you also want suggestions/architecture commentary | `Explore` (vanilla) |
+| Surgical edit, ≤2 files, scope obvious | `cavecrew-builder` |
+| New feature / 3+ files / cross-cutting refactor | Main thread or `feature-dev:code-architect` |
+| Review diff, branch, or file for bugs | `cavecrew-reviewer` |
+| Deep code review with rationale + alternatives | `Code Reviewer` (vanilla) |
 | One-line answer you already know | Main thread, no subagent |
 
-**Rule of thumb:** if you'd want the subagent's output in 1/3 the tokens, pick cavecrew. If you'd want prose, pick normal.
+Rule of thumb: **if you'd want the subagent's output in 1/3 the tokens, pick cavecrew. If you'd want prose, pick vanilla.**
 
-## Subagent Presets
+## Why this exists (the real win)
 
-### cavecrew-investigator
-Find code locations, trace definitions, list callers/callees. Returns file paths + line numbers + one-line purpose. No prose.
+Subagent tool results get injected into main context verbatim. A vanilla `Explore` that returns 2k tokens of prose costs 2k tokens of main-context budget every time. The same finding from `cavecrew-investigator` returns ~700 tokens. Across 20 delegations in one session that's the difference between context exhaustion and finishing the task.
 
+## Output contracts
+
+What main thread can rely on per agent:
+
+**`cavecrew-investigator`**
 ```
-Output format:
-  src/auth/login.ts:42 — validateSession()
-  src/auth/middleware.ts:15 — calls validateSession on /api/*
-  src/auth/types.ts:8 — SessionPayload interface
+<Header>:
+- path:line — `symbol` — short note
+totals: <counts>.
 ```
+Or `No match.` Always file-path-first, line-number-attached, backticked symbols. Safe to grep with `path:\d+`.
 
-### cavecrew-builder
-Surgical edits, ≤2 files. Returns diff summary in caveman-compressed format: what changed, why, line numbers.
-
+**`cavecrew-builder`**
 ```
-Output format:
-  + src/api/users.ts:23-35 — add GET /users/:id endpoint
-  ~ src/api/routes.ts:12 — register new route
-  Reason: mobile client needs profile without full user payload
+<path:line-range> — <change ≤10 words>.
+verified: <re-read OK | mismatch @ path:line>.
 ```
+Or one of: `too-big.` / `needs-confirm.` / `ambiguous.` / `regressed.` (terminal first token).
 
-### cavecrew-reviewer
-Reviews diffs/branches for bugs. Returns caveman-review format: one line per finding with severity prefix.
-
+**`cavecrew-reviewer`**
 ```
-Output format:
-  L42: bug: user null after .find(). Add guard.
-  L88: risk: no retry on 429. Wrap in backoff.
-  L120: nit: 50-line fn. Extract validate/normalize/persist.
+path:line: <emoji> <severity>: <problem>. <fix>.
+totals: N🔴 N🟡 N🔵 N❓
 ```
+Or `No issues.` Findings sorted file → line ascending.
 
-## When NOT to cavecrew
+## Chaining patterns
 
-- The subagent output IS the deliverable (e.g., a report, a generated doc)
-- Security findings that need full explanation
-- User explicitly asked for detailed analysis
-- Subagent needs to write 3+ files or do cross-cutting changes
-- Multi-step workflows with dependencies between steps
+**Locate → fix → verify** (most common):
+1. `cavecrew-investigator` returns site list.
+2. Main thread picks 1-2 sites, hands paths to `cavecrew-builder`.
+3. `cavecrew-reviewer` audits the diff.
 
-## Expected Output
+**Parallel scout** (when investigation is broad):
+Spawn 2-3 `cavecrew-investigator` calls in one message (different angles: defs vs callers vs tests). Aggregate in main thread.
 
-A decision — which subagent preset to use (or main thread). If delegating, also output the subagent type to use.
+**Single-shot edit** (when site is already known):
+Skip investigator. Hand exact path:line to `cavecrew-builder` directly.
 
-```
-Subagent: cavecrew-investigator
-Purpose: Find where validateSession() is defined and all callers
-```
+## What NOT to do
 
-```
-Subagent: cavecrew-reviewer
-Purpose: Review diff for bugs
-```
+- Don't use `cavecrew-builder` when you don't already know the file. Spawn investigator first or main thread will eat tokens passing context.
+- Don't chain `cavecrew-investigator → cavecrew-builder` for a 5-file refactor. Builder will return `too-big.` and you'll have wasted a turn.
+- Don't ask `cavecrew-reviewer` for "general feedback" — it returns findings only, no architecture opinions. Use `Code Reviewer` for that.
+- Don't expect prose. Cavecrew output is structured, sometimes terse to the point of cryptic. If a human will read it directly, paraphrase.
 
-## Edge Cases
+## Auto-clarity (inherited)
 
-- **Task spans multiple categories**: Default to the more narrowly scoped subagent. E.g., "find bug in login code" → reviewer (check for bug), then investigator (find location).
-- **User explicitly requests detailed output**: Use normal subagent, not cavecrew — detailed prose desired.
-- **Security-related debugging**: Always use normal subagent — caveman compression risks hiding nuance.
-- **Subagent count > 3 in parallel**: Still use main thread for orchestration, delegate each sub-task individually.
-
-## Acceptance Criteria
-
-- Decision table used to map task to agent type.
-- When delegation is chosen, output includes agent type AND purpose.
-- When main thread is chosen, output includes brief rationale.
-- Security tasks never delegated to cavecrew subagents without explicit user request.
+Subagents drop caveman → normal English for security warnings, irreversible-action confirmations, and any output where fragment ambiguity could be misread. Resume caveman after.

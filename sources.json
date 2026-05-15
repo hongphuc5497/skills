@@ -1,0 +1,113 @@
+{
+  "//": "Upstream sources for curated skills. Sync with: python3 scripts/sync_upstreams.py",
+  "auto-push": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/auto-push"
+  },
+  "brand-name-checker": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/brand-name-checker"
+  },
+  "code-optimizer": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/code-optimizer"
+  },
+  "code-review": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/code-review"
+  },
+  "context-hub": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/context-hub"
+  },
+  "docs-generator": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/docs-generator"
+  },
+  "idea-validator": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/idea-validator"
+  },
+  "oss-ready": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/oss-ready"
+  },
+  "prd-generator": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/prd-generator"
+  },
+  "quick-healthy-recipes": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/quick-healthy-recipes"
+  },
+  "release-manager": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/release-manager"
+  },
+  "security-setup": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/security-setup"
+  },
+  "seo-ai-optimizer": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/seo-ai-optimizer"
+  },
+  "tasks-generator": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/tasks-generator"
+  },
+  "usability-review": {
+    "repo": "luongnv89/skills",
+    "ref": "main",
+    "path": "skills/usability-review"
+  },
+  "caveman": {
+    "repo": "JuliusBrussee/caveman",
+    "ref": "main",
+    "path": "skills/caveman"
+  },
+  "caveman-commit": {
+    "repo": "JuliusBrussee/caveman",
+    "ref": "main",
+    "path": "skills/caveman-commit"
+  },
+  "caveman-compress": {
+    "repo": "JuliusBrussee/caveman",
+    "ref": "main",
+    "path": "skills/caveman-compress"
+  },
+  "caveman-help": {
+    "repo": "JuliusBrussee/caveman",
+    "ref": "main",
+    "path": "skills/caveman-help"
+  },
+  "caveman-review": {
+    "repo": "JuliusBrussee/caveman",
+    "ref": "main",
+    "path": "skills/caveman-review"
+  },
+  "cavecrew": {
+    "repo": "JuliusBrussee/caveman",
+    "ref": "main",
+    "path": "skills/cavecrew"
+  },
+  "caveman-stats": {
+    "repo": "JuliusBrussee/caveman",
+    "ref": "main",
+    "path": "skills/caveman-stats"
+  }
+}

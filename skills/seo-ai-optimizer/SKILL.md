@@ -2,10 +2,10 @@
 name: seo-ai-optimizer
 description: "Audit and optimize websites for technical SEO, content SEO, and AI bot accessibility. Fixes meta tags, sitemaps, robots.txt, structured data, llms.txt, and GPTBot/ClaudeBot directives. Not for App Store ASO, paid search, or blog writing."
 license: MIT
+effort: high
 metadata:
   version: 1.2.0
-  category: general
-  author: hongphuc5497
+  author: Luong NGUYEN <luongnv89@gmail.com>
 ---
 
 # SEO & AI Bot Optimizer

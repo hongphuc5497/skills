@@ -2,10 +2,10 @@
 name: prd-generator
 description: "Generate Product Requirements Documents from `idea.md` and `validate.md` files. Use when asked to create or update a PRD. Don't use for TAD, sprint tasks, or raw idea validation."
 license: MIT
+effort: max
 metadata:
   version: 1.3.1
-  category: general
-  author: hongphuc5497
+  author: Luong NGUYEN <luongnv89@gmail.com>
 ---
 
 # PRD Generator
