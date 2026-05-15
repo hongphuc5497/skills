@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.1
+
+- fix: add alt text to caveman-compress logo image (discovered by markdown-lint CI)
+- fix: add trailing newlines to caveman, caveman-commit, caveman-review SKILL.md
+
 ## v1.1.0
 
 ### Structural Improvements
