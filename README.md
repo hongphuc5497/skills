@@ -94,7 +94,11 @@ Personal skills built for my specific stack and workflows.
 <!-- TOC:START:TAILORED -->
 | Skill | What it does |
 |---|---|
+| [**caveman**](skills/caveman/) | Ultra-compressed communication mode. Cuts token usage ~75% by speaking like caveman while keeping full technical accu... |
 | [**caveman-commit**](skills/caveman-commit/) | Ultra-compressed commit message generator following caveman communication style. Cuts noise from PR descriptions and ... |
+| [**caveman-compress**](skills/caveman-compress/) | Compress natural language files (CLAUDE.md, AGENTS.md, todos, preferences) into caveman format to save input tokens. ... |
+| [**caveman-help**](skills/caveman-help/) | Quick-reference card for all caveman modes, skills, and commands. One-shot display, not a persistent mode. Use when u... |
+| [**caveman-review**](skills/caveman-review/) | Ultra-compressed code review comments. Cuts noise from PR feedback while preserving actionable signal. Each comment i... |
 | [**hermes-config**](skills/hermes-config/) | Configure Hermes Agent — providers, models, tools, skills, voice, gateway, plugins. Uses hermes CLI commands, not gue... |
 | [**multi-agent-orchestrator**](skills/multi-agent-orchestrator/) | Orchestrate work across multiple AI coding agents (Hermes, Codex, Claude Code) — delegate tasks in parallel, merge re... |
 <!-- TOC:END:TAILORED -->
