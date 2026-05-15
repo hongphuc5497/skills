@@ -70,7 +70,15 @@ Standalone, well-tested skills for common development workflows.
 <!-- TOC:START:GENERAL -->
 | Skill | What it does |
 |---|---|
+| [**auto-push**](skills/auto-push/) | Generate a commit message, stage all changes, and push to remote after scanning for secrets, large files, and protect... |
 | [**brand-name-checker**](skills/brand-name-checker/) | Check product and brand names for conflicts across trademarks, domains, social handles, and package registries. Retur... |
+| [**cavecrew**](skills/cavecrew/) | Decision guide for delegating to caveman-style subagents. Tells the main thread WHEN to spawn `cavecrew-investigator`... |
+| [**caveman**](skills/caveman/) | Ultra-compressed communication mode. Cuts token usage ~75% by speaking like caveman while keeping full technical accu... |
+| [**caveman-commit**](skills/caveman-commit/) | Ultra-compressed commit message generator. Cuts noise from commit messages while preserving intent and reasoning. Con... |
+| [**caveman-compress**](skills/caveman-compress/) | Compress natural language memory files (CLAUDE.md, todos, preferences) into caveman format to save input tokens. Pres... |
+| [**caveman-help**](skills/caveman-help/) | Quick-reference card for all caveman modes, skills, and commands. One-shot display, not a persistent mode. Trigger: /... |
+| [**caveman-review**](skills/caveman-review/) | Ultra-compressed code review comments. Cuts noise from PR feedback while preserving the actionable signal. Each comme... |
+| [**caveman-stats**](skills/caveman-stats/) | Show real token usage and estimated savings for the current session. Reads directly from the Claude Code session log ... |
 | [**code-optimizer**](skills/code-optimizer/) | Analyze code for performance bottlenecks, memory leaks, and algorithmic inefficiencies. Use when asked to optimize, f... |
 | [**code-review**](skills/code-review/) | Review code changes for bugs, security vulnerabilities, and code quality issues — producing prioritized findings with... |
 | [**context-hub**](skills/context-hub/) | Fetch current API/SDK docs before writing integration code. Use whenever writing code that integrates with an externa... |
@@ -93,14 +101,6 @@ Personal skills built for my specific stack and workflows.
 <!-- TOC:START:TAILORED -->
 | Skill | What it does |
 |---|---|
-| [**auto-push**](skills/auto-push/) | Generate a commit message, stage all changes, and push to remote after scanning for secrets, large files, and protect... |
-| [**cavecrew**](skills/cavecrew/) | Decision guide for delegating to caveman-style subagents. Use when the user wants to delegate work to subagents, spaw... |
-| [**caveman**](skills/caveman/) | Ultra-compressed communication mode. Cuts token usage ~75% by speaking like caveman while keeping full technical accu... |
-| [**caveman-commit**](skills/caveman-commit/) | Ultra-compressed commit message generator. Cuts noise from commit messages while preserving intent and reasoning. Con... |
-| [**caveman-compress**](skills/caveman-compress/) | Compress natural language memory files (CLAUDE.md, todos, preferences) into caveman format to save input tokens. Pres... |
-| [**caveman-help**](skills/caveman-help/) | Quick-reference card for all caveman modes, skills, and commands. One-shot display, not a persistent mode. Use when u... |
-| [**caveman-review**](skills/caveman-review/) | Ultra-compressed code review comments. Cuts noise from PR feedback while preserving the actionable signal. Each comme... |
-| [**caveman-stats**](skills/caveman-stats/) | Show token savings from caveman mode. Estimates savings based on communication intensity level vs baseline verbose re... |
 | [**hermes-config**](skills/hermes-config/) | Configure Hermes Agent — providers, models, tools, skills, voice, gateway, plugins. Uses hermes CLI commands. Not for... |
 | [**multi-agent-orchestrator**](skills/multi-agent-orchestrator/) | Orchestrate work across multiple AI coding agents (Hermes, Codex, Claude Code) — delegate tasks in parallel, merge re... |
 | [**rtk**](skills/rtk/) | RTK (Rust Token Killer) — CLI proxy that compresses noisy shell output by 60-90%. Use when piping commands through rt... |
