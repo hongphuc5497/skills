@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.1.0
+
+### Structural Improvements
+- Added Expected Output, Edge Cases, Acceptance Criteria to all 10 tailored skills
+- Added negative-trigger clauses to all descriptions
+- asm eval mean score: 80 → 88. Zero D-grade skills.
+
+### Upstream Sync
+- Pulled latest SKILL.md from luongnv89/skills (14 skills updated)
+- Pulled latest from JuliusBrussee/caveman — all 7 skills: new README.md, caveman-compress gained scripts/ directory
+- Added sources.json: dependency manifest for 22 upstream skills
+- Added scripts/sync_upstreams.py: batch upstream sync (2 API calls, SHA256 comparison, dry-run/apply modes)
+
 ## v1.0.1
 
 - Fix release workflow permissions (Actions → Read and write)
