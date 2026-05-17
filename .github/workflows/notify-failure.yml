@@ -133,7 +133,8 @@ jobs:
             field("Actor"; $actor) + "\n" +
             field("Event"; $event_name) + "\n" +
             field("Run"; "#" + $run_number) + "\n\n" +
-            "<a href=\"" + ($run_url | @html) + "\">Open failed run</a>"
+            "<a href=\"" + ($run_url | @html) + "\">Open failed run</a>\n\n" +
+            field("Ask Hermes"; "/fix-gh-run " + $run_url)
             ')"
 
           payload="$(jq -n \
