@@ -13,7 +13,7 @@
 
 Curated agent skills for AI coding tools (Hermes, Claude Code, Codex, Cursor, Windsurf, Copilot) — a mix of community-vetted skills and personal workflow automations.
 
-[**Browse the catalog**](#catalog) | [**Install**](#install)
+[**Browse the catalog**](#catalog) | [**Install**](#install) | [**CI notifications**](docs/ACTIONS_NOTIFICATIONS.md)
 
 ---
 

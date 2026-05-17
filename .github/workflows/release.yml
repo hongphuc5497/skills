@@ -23,9 +23,9 @@ jobs:
         id: version
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "tag=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "tag=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
           else
-            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Generate changelog
@@ -39,14 +39,20 @@ jobs:
             RANGE="$PREV_TAG..HEAD"
           fi
 
-          echo "## Changes in ${{ steps.version.outputs.tag }}" > CHANGELOG.md
-          echo "" >> CHANGELOG.md
+          {
+            echo "## Changes in ${{ steps.version.outputs.tag }}"
+            echo ""
 
-          git log $RANGE --pretty=format:"- %s (%h)" --reverse >> CHANGELOG.md
+            if [[ -z "$RANGE" ]]; then
+              git log --pretty=format:"- %s (%h)" --reverse
+            else
+              git log "$RANGE" --pretty=format:"- %s (%h)" --reverse
+            fi
 
-          echo "" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...${{ steps.version.outputs.tag }}" >> CHANGELOG.md
+            echo ""
+            echo ""
+            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...${{ steps.version.outputs.tag }}"
+          } > CHANGELOG.md
 
           cat CHANGELOG.md
 
@@ -61,3 +67,24 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify-failure:
+    name: Notify failure
+    needs: [release]
+    if: ${{ always() && needs.release.result == 'failure' }}
+    uses: ./.github/workflows/notify-failure.yml
+    with:
+      status: failure
+      repo: ${{ github.repository }}
+      workflow: ${{ github.workflow }}
+      job: release
+      branch: ${{ github.ref_name }}
+      sha: ${{ github.sha }}
+      actor: ${{ github.actor }}
+      event_name: ${{ github.event_name }}
+      run_number: ${{ github.run_number }}
+      run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

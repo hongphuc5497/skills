@@ -23,3 +23,24 @@ jobs:
         with:
           globs: "**/*.md"
           fix: false
+
+  notify-failure:
+    name: Notify failure
+    needs: [lint]
+    if: ${{ always() && needs.lint.result == 'failure' }}
+    uses: ./.github/workflows/notify-failure.yml
+    with:
+      status: failure
+      repo: ${{ github.repository }}
+      workflow: ${{ github.workflow }}
+      job: lint
+      branch: ${{ github.ref_name }}
+      sha: ${{ github.sha }}
+      actor: ${{ github.actor }}
+      event_name: ${{ github.event_name }}
+      run_number: ${{ github.run_number }}
+      run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
