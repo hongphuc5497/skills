@@ -72,7 +72,7 @@ jobs:
     name: Notify failure
     needs: [release]
     if: ${{ always() && needs.release.result == 'failure' }}
-    uses: ./.github/workflows/notify-failure.yml
+    uses: hongphuc5497/workflows/.github/workflows/notify-failure.yml@main
     with:
       status: failure
       repo: ${{ github.repository }}

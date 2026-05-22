@@ -28,7 +28,7 @@ jobs:
     name: Notify failure
     needs: [lint]
     if: ${{ always() && needs.lint.result == 'failure' }}
-    uses: ./.github/workflows/notify-failure.yml
+    uses: hongphuc5497/workflows/.github/workflows/notify-failure.yml@main
     with:
       status: failure
       repo: ${{ github.repository }}

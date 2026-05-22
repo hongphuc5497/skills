@@ -38,7 +38,7 @@ jobs:
     name: Notify failure
     needs: [sync]
     if: ${{ always() && needs.sync.result == 'failure' }}
-    uses: ./.github/workflows/notify-failure.yml
+    uses: hongphuc5497/workflows/.github/workflows/notify-failure.yml@main
     with:
       status: failure
       repo: ${{ github.repository }}
