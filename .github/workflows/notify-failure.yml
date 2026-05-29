@@ -1,0 +1,156 @@
+name: Notify Workflow Failure
+
+on:
+  workflow_call:
+    inputs:
+      status:
+        required: true
+        type: string
+      repo:
+        required: true
+        type: string
+      workflow:
+        required: true
+        type: string
+      job:
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+      sha:
+        required: true
+        type: string
+      actor:
+        required: true
+        type: string
+      event_name:
+        required: true
+        type: string
+      run_number:
+        required: true
+        type: string
+      run_url:
+        required: true
+        type: string
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: false
+      TELEGRAM_BOT_TOKEN:
+        required: false
+      TELEGRAM_CHAT_ID:
+        required: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.status == 'failure' }}
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - name: Send Slack notification
+        if: ${{ env.SLACK_WEBHOOK_URL != '' }}
+        env:
+          REPO: ${{ inputs.repo }}
+          WORKFLOW: ${{ inputs.workflow }}
+          JOB: ${{ inputs.job }}
+          BRANCH: ${{ inputs.branch }}
+          COMMIT_SHA: ${{ inputs.sha }}
+          ACTOR: ${{ inputs.actor }}
+          EVENT_NAME: ${{ inputs.event_name }}
+          RUN_NUMBER: ${{ inputs.run_number }}
+          RUN_URL: ${{ inputs.run_url }}
+        run: |
+          short_sha="${COMMIT_SHA:0:7}"
+          payload="$(jq -n \
+            --arg repo "$REPO" \
+            --arg workflow "$WORKFLOW" \
+            --arg job "$JOB" \
+            --arg branch "$BRANCH" \
+            --arg sha "$short_sha" \
+            --arg actor "$ACTOR" \
+            --arg event_name "$EVENT_NAME" \
+            --arg run_number "$RUN_NUMBER" \
+            --arg run_url "$RUN_URL" \
+            '{
+              text: ("GitHub Actions failure: " + $repo),
+              blocks: [
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: ("*GitHub Actions failed*\n*Repo:* " + $repo + "\n*Workflow:* " + $workflow + "\n*Job:* " + $job + "\n*Branch/ref:* " + $branch + "\n*Commit:* `" + $sha + "`\n*Actor:* " + $actor + "\n*Event:* " + $event_name + "\n*Run:* #" + $run_number + "\n<" + $run_url + "|Open failed run>")
+                  }
+                }
+              ]
+            }')"
+
+          curl -fsS -X POST \
+            -H "Content-Type: application/json" \
+            --data "$payload" \
+            "$SLACK_WEBHOOK_URL"
+
+      - name: Skip Slack notification
+        if: ${{ env.SLACK_WEBHOOK_URL == '' }}
+        run: echo "SLACK_WEBHOOK_URL is not set; skipping Slack notification."
+
+      - name: Send Telegram notification
+        if: ${{ env.TELEGRAM_BOT_TOKEN != '' && env.TELEGRAM_CHAT_ID != '' }}
+        env:
+          REPO: ${{ inputs.repo }}
+          WORKFLOW: ${{ inputs.workflow }}
+          JOB: ${{ inputs.job }}
+          BRANCH: ${{ inputs.branch }}
+          COMMIT_SHA: ${{ inputs.sha }}
+          ACTOR: ${{ inputs.actor }}
+          EVENT_NAME: ${{ inputs.event_name }}
+          RUN_NUMBER: ${{ inputs.run_number }}
+          RUN_URL: ${{ inputs.run_url }}
+        run: |
+          short_sha="${COMMIT_SHA:0:7}"
+          message="$(jq -n -r \
+            --arg repo "$REPO" \
+            --arg workflow "$WORKFLOW" \
+            --arg job "$JOB" \
+            --arg branch "$BRANCH" \
+            --arg sha "$short_sha" \
+            --arg actor "$ACTOR" \
+            --arg event_name "$EVENT_NAME" \
+            --arg run_number "$RUN_NUMBER" \
+            --arg run_url "$RUN_URL" \
+            '
+            def field($label; $value):
+              "<b>" + $label + ":</b> <code>" + ($value | @html) + "</code>";
+
+            "<b>GitHub Actions failed</b>\n\n" +
+            field("Repo"; $repo) + "\n" +
+            field("Workflow"; $workflow) + "\n" +
+            field("Job"; $job) + "\n" +
+            field("Branch/ref"; $branch) + "\n" +
+            field("Commit"; $sha) + "\n" +
+            field("Actor"; $actor) + "\n" +
+            field("Event"; $event_name) + "\n" +
+            field("Run"; "#" + $run_number) + "\n\n" +
+            "<a href=\"" + ($run_url | @html) + "\">Open failed run</a>"
+            ')"
+
+          payload="$(jq -n \
+            --arg chat_id "$TELEGRAM_CHAT_ID" \
+            --arg text "$message" \
+            '{
+              chat_id: $chat_id,
+              text: $text,
+              parse_mode: "HTML",
+              disable_web_page_preview: true
+            }')"
+
+          curl -fsS -X POST \
+            -H "Content-Type: application/json" \
+            --data "$payload" \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
+
+      - name: Skip Telegram notification
+        if: ${{ env.TELEGRAM_BOT_TOKEN == '' || env.TELEGRAM_CHAT_ID == '' }}
+        run: echo "TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not set; skipping Telegram notification."

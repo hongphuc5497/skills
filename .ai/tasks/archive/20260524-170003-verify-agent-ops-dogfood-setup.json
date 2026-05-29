@@ -1,0 +1,15 @@
+{
+  "files_in_scope": [],
+  "finished_at": "2026-05-24T17:00:03.705556+00:00",
+  "id": "20260524-170003-verify-agent-ops-dogfood-setup",
+  "out_of_scope": [],
+  "owner": "Codex",
+  "repo": "",
+  "started_at": "2026-05-24T17:00:03.371197+00:00",
+  "status": "done",
+  "task_file": ".ai/tasks/20260524-170003-verify-agent-ops-dogfood-setup.md",
+  "title": "verify Agent Ops dogfood setup",
+  "verification": "./scripts/ao check",
+  "verification_result": "./scripts/ao check passed after init and Codex integration",
+  "workflow": ".ai/workflows/feature.md"
+}

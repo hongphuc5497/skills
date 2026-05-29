@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# ao — Agent Ops CLI entrypoint
+# Thin wrapper over scripts/agent-ops-tool.py.
+# This is plumbing, not the primary product surface.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BRIDGE="$SCRIPT_DIR/agent-ops-tool.py"
+
+usage() {
+    cat <<'EOF'
+ao — Agent Ops CLI
+
+Usage:
+  ao status
+  ao route <description>
+  ao start <title> [--owner <agent>] [--repo <path>] [--workflow <path>]
+                  [--verification <text>] [--files <glob>...]
+                  [--out-of-scope <glob>...]
+  ao claim <paths...> [--owner <agent>] [--reason <text>]
+  ao handoff --to <agent> --acceptance <text> [--from-owner <agent>]
+             [--files <path>...] [--verification <text>] [--notes <text>]
+  ao delegate <description> [--to <agent>] [--from-owner <agent>]
+             [--files <path>...] [--acceptance <text>]
+             [--verification <text>] [--notes <text>]
+  ao finish done|parked|killed [--verification <text>]
+  ao check
+  ao version
+  ao help
+
+Commands:
+  status    Show active task, owner, and file claims
+  route     Suggest owner and workflow for a task description
+  start     Create and lock an active task
+  claim     Claim files for the active task
+  handoff   Transfer file ownership to another agent
+  delegate  Auto-route a sub-task and record delegation handoff
+  finish    Complete, park, or kill the active task
+  check     Verify protocol health (files, schemas, stale tasks)
+  version   Print ao version
+  help      Show this help
+EOF
+}
+
+version() {
+    echo "ao 0.1.0"
+}
+
+# --- main -----------------------------------------------------------
+
+if [[ ! -f "$BRIDGE" ]]; then
+    echo "ao: error: bridge not found at $BRIDGE" >&2
+    exit 1
+fi
+
+case "${1:-}" in
+    status|route|start|claim|handoff|delegate|finish|check)
+        exec python3 "$BRIDGE" "$@"
+        ;;
+    version)
+        version
+        ;;
+    help|--help|-h)
+        usage
+        ;;
+    "")
+        usage
+        ;;
+    *)
+        echo "ao: unknown command '${1}'. Run 'ao help' for usage." >&2
+        exit 1
+        ;;
+esac

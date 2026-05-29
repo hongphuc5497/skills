@@ -1,0 +1,15 @@
+{
+  "files_in_scope": [],
+  "finished_at": "2026-05-29T17:47:43.945773+00:00",
+  "id": "20260529-174546-sync-skills-from-upstream",
+  "out_of_scope": [],
+  "owner": "Codex",
+  "repo": "",
+  "started_at": "2026-05-29T17:45:46.993579+00:00",
+  "status": "done",
+  "task_file": ".ai/tasks/20260529-174546-sync-skills-from-upstream.md",
+  "title": "sync skills from upstream",
+  "verification": "targeted tests, lint, build, or browser check as appropriate",
+  "verification_result": "python3 scripts/validate_skills.py && python3 scripts/sync_toc.py",
+  "workflow": ".ai/workflows/feature.md"
+}
