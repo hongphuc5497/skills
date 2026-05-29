@@ -27,3 +27,6 @@ Thumbs.db
 # Documentation drafts
 *.md~
 *.html~
+
+# Agent Ops
+.ai/
