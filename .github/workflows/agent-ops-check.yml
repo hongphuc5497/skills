@@ -1,0 +1,38 @@
+name: Agent Ops Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify agent ops control plane
+        run: ./scripts/agent-ops-check.sh
+
+  notify-failure:
+    name: Notify failure
+    needs: [check]
+    if: ${{ always() && needs.check.result == 'failure' }}
+    uses: ./.github/workflows/notify-failure.yml
+    with:
+      status: failure
+      repo: ${{ github.repository }}
+      workflow: ${{ github.workflow }}
+      job: check
+      branch: ${{ github.ref_name }}
+      sha: ${{ github.sha }}
+      actor: ${{ github.actor }}
+      event_name: ${{ github.event_name }}
+      run_number: ${{ github.run_number }}
+      run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
