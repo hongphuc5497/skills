@@ -1,0 +1,15 @@
+{
+  "files_in_scope": [],
+  "finished_at": "2026-05-29T19:12:28.677837+00:00",
+  "id": "20260529-175218-implement-interactive-skills-catalog-website",
+  "out_of_scope": [],
+  "owner": "Codex",
+  "repo": "",
+  "started_at": "2026-05-29T17:52:18.964598+00:00",
+  "status": "done",
+  "task_file": ".ai/tasks/20260529-175218-implement-interactive-skills-catalog-website.md",
+  "title": "implement interactive skills catalog website",
+  "verification": "targeted tests, lint, build, or browser check as appropriate",
+  "verification_result": "python3 scripts/generate_site.py && python3 scripts/validate_skills.py && python3 scripts/sync_toc.py",
+  "workflow": ".ai/workflows/feature.md"
+}

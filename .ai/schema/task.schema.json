@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-ops.local/schema/task.schema.json",
+  "title": "Agent Ops Task",
+  "type": "object",
+  "required": ["id", "title", "owner", "status", "started_at", "task_file"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "done", "parked", "killed"]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "task_file": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repo": {
+      "type": "string"
+    },
+    "workflow": {
+      "type": "string"
+    },
+    "verification": {
+      "type": "string"
+    },
+    "files_in_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "out_of_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}
+
