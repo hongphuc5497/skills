@@ -3,460 +3,1043 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skills Catalog — hongphuc5497</title>
-  <meta name="description" content="Curated AI agent skills for Hermes, Claude Code, Codex, Cursor, Windsurf, Copilot">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Agent Skills Catalog | hongphuc5497</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="A curated collection of agent skills for AI coding tools like Claude Code, Cursor, Windsurf, and Hermes. Find and install automations easily.">
+  <meta name="keywords" content="AI, Coding Agents, Claude Code, Cursor, Windsurf, Prompt Engineering, Automations, Skills">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- PrismJS for Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Marked.js Markdown Parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'JetBrains Mono', monospace;
-      background: #020617;
-      color: #e2e8f0;
-      min-height: 100vh;
-      line-height: 1.6;
+    /* Design System / Variables */
+    :root {
+      --bg-base: #070913;
+      --bg-surface: rgba(22, 28, 45, 0.4);
+      --bg-surface-hover: rgba(30, 38, 60, 0.6);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-color-hover: rgba(0, 245, 160, 0.4);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      
+      --gradient-primary: linear-gradient(135deg, #00f5a0 0%, #00d9f5 100%);
+      --gradient-secondary: linear-gradient(135deg, #7f00ff 0%, #e100ff 100%);
+      --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+      
+      --color-green: #00f5a0;
+      --color-blue: #00d9f5;
+      --color-violet: #a855f7;
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-heading: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --shadow-glow: 0 0 20px rgba(0, 245, 160, 0.15);
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 217, 245, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(127, 0, 255, 0.05) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-base);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      border: 2px solid var(--bg-base);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
 
     /* Header */
-    .header { text-align: center; margin-bottom: 3rem; }
-    .header h1 { font-size: 2rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem; }
-    .header .subtitle { color: #94a3b8; font-size: 0.9rem; }
-    .header .badges { margin-top: 0.75rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
-    .badge {
-      background: rgba(34, 211, 238, 0.1);
-      color: #22d3ee;
-      border: 1px solid rgba(34, 211, 238, 0.25);
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.7rem;
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 9, 19, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 0;
     }
 
-    /* Search */
-    .search-bar {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid #1e293b;
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1.5rem;
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      position: sticky; top: 1rem; z-index: 10;
-      backdrop-filter: blur(10px);
+      text-decoration: none;
+      color: inherit;
     }
-    .search-bar input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: #e2e8f0;
-      font-family: inherit;
-      font-size: 0.9rem;
-      outline: none;
-    }
-    .search-bar input::placeholder { color: #475569; }
-    .search-icon { color: #64748b; font-size: 1.1rem; }
-    .tag-filter {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-    }
-    .tag {
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid #334155;
-      color: #94a3b8;
-      padding: 0.2rem 0.6rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.7rem;
-      transition: all 0.15s;
-      user-select: none;
-    }
-    .tag:hover { border-color: #22d3ee; color: #e2e8f0; }
-    .tag.active { background: rgba(34, 211, 238, 0.15); border-color: #22d3ee; color: #22d3ee; }
 
-    /* Skill Cards */
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1rem;
-    }
-    .skill-card {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid #1e293b;
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
       border-radius: 10px;
-      padding: 1.25rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-    }
-    .skill-card:hover { border-color: #334155; background: rgba(15, 23, 42, 0.9); }
-    .skill-card .name {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #f8fafc;
-      margin-bottom: 0.4rem;
       display: flex;
       align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(0, 245, 160, 0.3);
+    }
+
+    .brand-logo svg {
+      width: 24px;
+      height: 24px;
+      fill: #070913;
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stats-badges {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .stats-badge {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .stats-badge span {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 5rem 0 3rem 0;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 span {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* Filter & Search Dashboard */
+    .dashboard {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(7, 9, 19, 0.6);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 1rem 1rem 1rem 3.25rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .search-input:focus {
+      border-color: var(--color-green);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .filter-tabs {
+      display: flex;
       gap: 0.5rem;
     }
-    .skill-card .name .icon { color: #22d3ee; font-size: 0.85rem; }
-    .skill-card .desc {
+
+    .filter-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-heading);
+      transition: var(--transition-smooth);
+    }
+
+    .filter-tab:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .filter-tab.active {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* Skills Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 5rem;
+    }
+
+    .skill-card {
+      background: var(--bg-surface);
+      background-image: var(--gradient-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--gradient-primary);
+      opacity: 0;
+      transition: var(--transition-smooth);
+    }
+
+    .skill-card:hover {
+      transform: translateY(-5px);
+      background: var(--bg-surface-hover);
+      border-color: var(--border-color-hover);
+      box-shadow: 0 10px 25px rgba(0, 245, 160, 0.08);
+    }
+
+    .skill-card:hover::before {
+      opacity: 1;
+    }
+
+    .skill-card.tailored::before {
+      background: var(--gradient-secondary);
+    }
+
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .category-badge {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-family: var(--font-heading);
+    }
+
+    .category-badge.general {
+      background: rgba(0, 245, 160, 0.1);
+      color: var(--color-green);
+      border: 1px solid rgba(0, 245, 160, 0.2);
+    }
+
+    .category-badge.tailored {
+      background: rgba(168, 85, 247, 0.1);
+      color: var(--color-violet);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+    }
+
+    .version-tag {
+      font-family: var(--font-mono);
       font-size: 0.8rem;
-      color: #94a3b8;
+      color: var(--text-muted);
+    }
+
+    .skill-title {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 700;
       margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+
+    .skill-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      flex-grow: 1;
+      margin-bottom: 1.5rem;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    .skill-card .meta {
+
+    .skill-footer {
       display: flex;
-      gap: 0.75rem;
-      font-size: 0.7rem;
-      color: #64748b;
-    }
-    .skill-card .meta span { display: flex; align-items: center; gap: 0.25rem; }
-    .skill-card .category-badge {
-      position: absolute;
-      top: 1.25rem;
-      right: 1.25rem;
-      background: rgba(34, 211, 238, 0.1);
-      color: #22d3ee;
-      font-size: 0.65rem;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-      border: 1px solid rgba(34, 211, 238, 0.2);
-    }
-    .skill-card.tailored { border-left: 2px solid #a78bfa; }
-    .skill-card.tailored .category-badge {
-      background: rgba(167, 139, 250, 0.1);
-      border-color: rgba(167, 139, 250, 0.2);
-      color: #a78bfa;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
 
-    /* Detail Modal */
+    .skill-author {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+
+    .learn-more {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-weight: 600;
+      color: var(--color-green);
+      font-family: var(--font-heading);
+      transition: var(--transition-smooth);
+    }
+
+    .skill-card:hover .learn-more {
+      gap: 0.5rem;
+    }
+
+    /* Modal / Details Drawer */
     .modal-overlay {
-      display: none;
       position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.85);
-      z-index: 100;
-      backdrop-filter: blur(4px);
-      padding: 2rem;
-      overflow-y: auto;
-    }
-    .modal-overlay.active { display: flex; align-items: flex-start; justify-content: center; }
-    .modal {
-      background: #0f172a;
-      border: 1px solid #1e293b;
-      border-radius: 16px;
-      max-width: 750px;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 2rem;
-      margin: 2rem 0;
+      height: 100%;
+      background: rgba(7, 9, 19, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
-    .modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
-    .modal-header h2 { font-size: 1.3rem; color: #f8fafc; }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-container {
+      width: 90%;
+      max-width: 900px;
+      max-height: 85vh;
+      background: rgba(13, 17, 30, 0.95);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-overlay.active .modal-container {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(22, 28, 45, 0.2);
+    }
+
+    .modal-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .modal-title-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
+
     .modal-close {
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid #334155;
-      color: #94a3b8;
-      width: 32px; height: 32px;
-      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      font-size: 1rem;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
+      transition: var(--transition-smooth);
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      transform: rotate(90deg);
+    }
+
+    /* Modal Command Copy Section */
+    .install-box {
+      background: rgba(7, 9, 19, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 2rem 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .install-command {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--color-green);
+      overflow-x: auto;
+      white-space: nowrap;
+      user-select: all;
+    }
+
+    .copy-btn {
+      background: var(--gradient-primary);
+      color: #070913;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-family: var(--font-heading);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition-smooth);
       flex-shrink: 0;
     }
-    .modal-close:hover { background: #1e293b; color: #f8fafc; }
-    .modal-meta {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
-      font-size: 0.75rem;
-      color: #64748b;
-      flex-wrap: wrap;
-    }
-    .modal-content {
-      background: rgba(2, 6, 23, 0.5);
-      border: 1px solid #1e293b;
-      border-radius: 10px;
-      padding: 1.25rem;
-      font-size: 0.8rem;
-      line-height: 1.7;
-      color: #cbd5e1;
-      white-space: pre-wrap;
-      max-height: 50vh;
-      overflow-y: auto;
-    }
-    .modal-content code {
-      background: rgba(34, 211, 238, 0.1);
-      color: #22d3ee;
-      padding: 0.1rem 0.3rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-    }
-    .modal-content pre {
-      background: #020617;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      padding: 1rem;
-      overflow-x: auto;
-      margin: 0.5rem 0;
-      font-size: 0.75rem;
-    }
-    .modal-install {
-      margin-top: 1rem;
-      background: rgba(34, 211, 238, 0.05);
-      border: 1px solid rgba(34, 211, 238, 0.15);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      font-size: 0.75rem;
-      color: #22d3ee;
-    }
-    .modal-install code { background: rgba(34, 211, 238, 0.2); }
 
-    /* Zero results */
-    .empty-state {
-      text-align: center;
-      padding: 3rem;
-      color: #475569;
-      font-size: 0.85rem;
+    .copy-btn:hover {
+      box-shadow: 0 0 15px rgba(0, 245, 160, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .copy-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Modal Body Content */
+    .modal-body {
+      padding: 2rem;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    /* Markdown styling inside modal */
+    .markdown-content {
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+
+    .markdown-content h1,
+    .markdown-content h2,
+    .markdown-content h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      margin: 1.75rem 0 1rem 0;
+      color: #ffffff;
+    }
+
+    .markdown-content h1 {
+      font-size: 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+
+    .markdown-content h2 { font-size: 1.4rem; }
+    .markdown-content h3 { font-size: 1.15rem; }
+
+    .markdown-content p {
+      margin-bottom: 1.25rem;
+      color: var(--text-secondary);
+    }
+
+    .markdown-content ul,
+    .markdown-content ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: var(--text-secondary);
+    }
+
+    .markdown-content li {
+      margin-bottom: 0.5rem;
+    }
+
+    .markdown-content code {
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: #ff79c6;
+    }
+
+    .markdown-content pre {
+      margin: 1.5rem 0;
+      border-radius: 12px !important;
+      border: 1px solid var(--border-color);
+    }
+
+    .markdown-content pre code {
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      color: inherit;
+    }
+
+    .markdown-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+
+    .markdown-content th,
+    .markdown-content td {
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    .markdown-content th {
+      background: rgba(255, 255, 255, 0.03);
+      font-weight: 600;
+    }
+
+    .markdown-content blockquote {
+      border-left: 4px solid var(--color-green);
+      background: rgba(0, 245, 160, 0.04);
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .markdown-content blockquote p {
+      margin: 0;
+      color: var(--text-primary);
     }
 
     /* Footer */
-    .footer {
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 3rem 0;
       text-align: center;
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid #1e293b;
-      color: #475569;
-      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
     }
-    .footer a { color: #64748b; }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    footer a:hover {
+      color: var(--color-green);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+      display: none;
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .search-row {
+        flex-direction: column;
+      }
+      
+      .install-box {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .copy-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <h1>🧠 Skills Catalog</h1>
-      <p class="subtitle">Curated agent skills for AI coding tools — Hermes, Claude Code, Codex, &amp; more</p>
-      <div class="badges" id="stats"></div>
-    </div>
 
-    <!-- Search -->
-    <div class="search-bar">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search skills by name, description, or tag..." autocomplete="off">
-    </div>
-
-    <!-- Tag Filter -->
-    <div class="tag-filter" id="tagFilter"></div>
-
-    <!-- Skills Grid -->
-    <div class="skills-grid" id="skillsGrid"></div>
-    <div class="empty-state" id="emptyState" style="display:none">No skills match your search. Try different keywords!</div>
-
-    <!-- Footer -->
-    <p class="footer">
-      github.com/<a href="https://github.com/hongphuc5497/skills">hongphuc5497/skills</a> · MIT · <span id="versionLabel"></span>
-    </p>
-  </div>
-
-  <!-- Modal -->
-  <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal" id="modal">
-      <div class="modal-header">
-        <h2 id="modalTitle"></h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+  <!-- Header -->
+  <header>
+    <div class="container header-content">
+      <a href="./" class="brand" id="brand-link">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13H5.5L12 6.5z"/>
+          </svg>
+        </div>
+        <span class="brand-title">Skills Catalog</span>
+      </a>
+      
+      <div class="stats-badges">
+        <div class="stats-badge">Total: <span id="total-count">0</span></div>
+        <div class="stats-badge">General: <span id="general-count">0</span></div>
+        <div class="stats-badge">Tailored: <span id="tailored-count">0</span></div>
       </div>
-      <div class="modal-meta" id="modalMeta"></div>
-      <div class="modal-content" id="modalContent"></div>
-      <div class="modal-install" id="modalInstall"></div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Curated <span>Agent Skills</span></h1>
+      <p>Supercharge your AI coding tools with vetted, task-focused workflow instruction files.</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container">
+    
+    <!-- Filter Panel -->
+    <div class="dashboard">
+      <div class="search-row">
+        <div class="search-wrapper">
+          <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search skills by name, description, parameters..." aria-label="Search skills">
+        </div>
+      </div>
+      
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-category="all" id="tab-all">All Skills</button>
+        <button class="filter-tab" data-category="general" id="tab-general">General</button>
+        <button class="filter-tab" data-category="tailored" id="tab-tailored">Tailored</button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="empty-state">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <h3>No skills match your search</h3>
+      <p>Try checking your spelling or adjusting your filters.</p>
+    </div>
+
+    <!-- Grid -->
+    <div class="skills-grid" id="skills-grid"></div>
+
+  </main>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-title-row">
+            <span class="category-badge" id="modal-badge"></span>
+            <span class="version-tag" id="modal-version"></span>
+          </div>
+          <h2 class="modal-title" id="modal-title"></h2>
+        </div>
+        <button class="modal-close" id="modal-close" aria-label="Close modal">✕</button>
+      </div>
+      
+      <div class="install-box">
+        <div class="install-command" id="install-command"></div>
+        <button class="copy-btn" id="copy-btn">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="copy-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+          </svg>
+          <span id="copy-btn-text">Copy Install</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="markdown-content" id="markdown-content"></div>
+      </div>
     </div>
   </div>
 
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>© 2026 hongphuc5497. Licensed under <a href="https://github.com/hongphuc5497/skills/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT</a>.</p>
+      <p style="margin-top: 0.5rem; font-size: 0.8rem;">Explore on <a href="https://github.com/hongphuc5497/skills" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+    </div>
+  </footer>
+
+  <!-- Load dynamic skills data generated by Python -->
   <script src="skills_data.js"></script>
+  
+  <!-- PrismJS syntax highlighter logic -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
   <script>
-    // ── State ──────────────────────────────────────────────────
-    let activeTag = null;
+    // State management
+    let activeFilter = 'all';
+    let searchQuery = '';
+    let currentSkill = null;
 
-    // ── Init ───────────────────────────────────────────────────
-    function init() {
-      document.getElementById('stats').innerHTML =
-        `<span class="badge">${SKILLS_DATA.length} skills</span>` +
-        `<span class="badge">AGPLv3 + MIT</span>` +
-        `<span class="badge">v1.0.0</span>`;
+    // Elements
+    const searchInput = document.getElementById('search-input');
+    const tabAll = document.getElementById('tab-all');
+    const tabGeneral = document.getElementById('tab-general');
+    const tabTailored = document.getElementById('tab-tailored');
+    const skillsGrid = document.getElementById('skills-grid');
+    const emptyState = document.getElementById('empty-state');
+    
+    const totalCount = document.getElementById('total-count');
+    const generalCount = document.getElementById('general-count');
+    const tailoredCount = document.getElementById('tailored-count');
 
-      document.getElementById('versionLabel').textContent =
-        `built ${new Date().toISOString().slice(0, 10)}`;
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalClose = document.getElementById('modal-close');
+    const modalBadge = document.getElementById('modal-badge');
+    const modalVersion = document.getElementById('modal-version');
+    const modalTitle = document.getElementById('modal-title');
+    const installCommand = document.getElementById('install-command');
+    const copyBtn = document.getElementById('copy-btn');
+    const copyBtnText = document.getElementById('copy-btn-text');
+    const copyIcon = document.getElementById('copy-icon');
+    const markdownContent = document.getElementById('markdown-content');
 
-      buildTagFilter();
-      renderGrid(SKILLS_DATA);
-
-      document.getElementById('searchInput').addEventListener('input', filterGrid);
+    // Init counts
+    function initStats() {
+      if (typeof SKILLS_DATA === 'undefined') return;
+      totalCount.textContent = SKILLS_DATA.length;
+      generalCount.textContent = SKILLS_DATA.filter(s => s.category !== 'tailored').length;
+      tailoredCount.textContent = SKILLS_DATA.filter(s => s.category === 'tailored').length;
     }
 
-    // ── Tags ───────────────────────────────────────────────────
-    function buildTagFilter() {
-      const tags = new Set();
-      SKILLS_DATA.forEach(s => { const cat = s.category || 'general'; tags.add(cat); });
-      const container = document.getElementById('tagFilter');
-      container.innerHTML = '<span class="tag active" onclick="setTag(null, this)">All</span>';
-      [...tags].sort().forEach(t => {
-        const el = document.createElement('span');
-        el.className = 'tag';
-        el.textContent = t;
-        el.onclick = () => setTag(t, el);
-        container.appendChild(el);
+    // Filter Logic
+    function filterSkills() {
+      if (typeof SKILLS_DATA === 'undefined') return [];
+      
+      return SKILLS_DATA.filter(skill => {
+        const matchesCategory = 
+          activeFilter === 'all' || 
+          (activeFilter === 'general' && skill.category !== 'tailored') ||
+          (activeFilter === 'tailored' && skill.category === 'tailored');
+        
+        const q = searchQuery.toLowerCase();
+        const matchesSearch = 
+          skill.name.toLowerCase().includes(q) ||
+          skill.description.toLowerCase().includes(q) ||
+          (skill.author && skill.author.toLowerCase().includes(q));
+
+        return matchesCategory && matchesSearch;
       });
     }
 
-    function setTag(tag, el) {
-      activeTag = tag;
-      document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-      el.classList.add('active');
-      filterGrid();
-    }
+    // Render Cards
+    function renderSkills() {
+      const filtered = filterSkills();
+      skillsGrid.innerHTML = '';
 
-    // ── Filter ─────────────────────────────────────────────────
-    function filterGrid() {
-      const q = document.getElementById('searchInput').value.toLowerCase().trim();
-      let filtered = SKILLS_DATA;
-      if (activeTag) filtered = filtered.filter(s => (s.category || 'general') === activeTag);
-      if (q) {
-        filtered = filtered.filter(s =>
-          s.name.toLowerCase().includes(q) ||
-          s.description.toLowerCase().includes(q) ||
-          (s.category || '').toLowerCase().includes(q)
-        );
-      }
-      renderGrid(filtered);
-    }
-
-    // ── Render ─────────────────────────────────────────────────
-    function renderGrid(skills) {
-      const grid = document.getElementById('skillsGrid');
-      const empty = document.getElementById('emptyState');
-      if (skills.length === 0) {
-        grid.innerHTML = '';
-        empty.style.display = 'block';
+      if (filtered.length === 0) {
+        skillsGrid.style.display = 'none';
+        emptyState.style.display = 'block';
         return;
       }
-      empty.style.display = 'none';
-      grid.innerHTML = skills.map((s, i) => {
-        const icon = s.category === 'tailored' ? '⚡' : '📦';
-        const borderClass = s.category === 'tailored' ? ' tailored' : '';
-        const catLabel = s.category || 'general';
-        return `
-          <div class="skill-card${borderClass}" onclick="openSkill(${i})">
-            <span class="category-badge">${catLabel}</span>
-            <div class="name"><span class="icon">${icon}</span>${s.name}</div>
-            <div class="desc">${escapeHtml(s.description)}</div>
-            <div class="meta">
-              <span>v${s.version || '1.0.0'}</span>
-            </div>
-          </div>`;
-      }).join('');
 
-      // Save the original index for modal lookup
-      document.querySelectorAll('.skill-card').forEach((card, idx) => {
-        card.dataset.skillIdx = idx;
+      skillsGrid.style.display = 'grid';
+      emptyState.style.display = 'none';
+
+      filtered.forEach(skill => {
+        const card = document.createElement('div');
+        card.className = `skill-card ${skill.category === 'tailored' ? 'tailored' : 'general'}`;
+        card.id = `skill-card-${skill.name}`;
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `View details for ${skill.name}`);
+        
+        const badgeClass = skill.category === 'tailored' ? 'tailored' : 'general';
+        const badgeLabel = skill.category === 'tailored' ? 'Tailored' : 'General';
+        
+        card.innerHTML = `
+          <div class="skill-header">
+            <span class="category-badge ${badgeClass}">${badgeLabel}</span>
+            <span class="version-tag">v${skill.version}</span>
+          </div>
+          <h3 class="skill-title">${skill.name}</h3>
+          <p class="skill-desc">${skill.description}</p>
+          <div class="skill-footer">
+            <span class="skill-author">${skill.author ? skill.author.split('<')[0].trim() : 'Unknown'}</span>
+            <span class="learn-more">
+              Learn more 
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:inline-block; vertical-align:middle;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </span>
+          </div>
+        `;
+
+        // Click interaction
+        const selectCard = () => openModal(skill);
+        card.addEventListener('click', selectCard);
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectCard();
+          }
+        });
+
+        skillsGrid.appendChild(card);
       });
     }
 
-    // ── Modal ──────────────────────────────────────────────────
-    function openSkill(gridIdx) {
-      // Re-filter to find actual skill data index
-      const q = document.getElementById('searchInput').value.toLowerCase().trim();
-      let filtered = SKILLS_DATA;
-      if (activeTag) filtered = filtered.filter(s => (s.category || 'general') === activeTag);
-      if (q) {
-        filtered = filtered.filter(s =>
-          s.name.toLowerCase().includes(q) ||
-          s.description.toLowerCase().includes(q) ||
-          (s.category || '').toLowerCase().includes(q)
-        );
+    // Open Modal
+    function openModal(skill) {
+      currentSkill = skill;
+      modalTitle.textContent = skill.name;
+      modalVersion.textContent = `v${skill.version}`;
+      
+      const isTailored = skill.category === 'tailored';
+      modalBadge.textContent = isTailored ? 'Tailored' : 'General';
+      modalBadge.className = `category-badge ${isTailored ? 'tailored' : 'general'}`;
+
+      // Set install command
+      const cmd = `npx skills add https://github.com/hongphuc5497/skills --skill ${skill.name}`;
+      installCommand.textContent = cmd;
+
+      // Copy reset
+      copyBtnText.textContent = "Copy Install";
+      copyIcon.style.color = "inherit";
+
+      // Render markdown content using marked.js
+      if (window.marked) {
+        markdownContent.innerHTML = window.marked.parse(skill.content);
+        // Highlight code blocks with Prism
+        if (window.Prism) {
+          window.Prism.highlightAllUnder(markdownContent);
+        }
+      } else {
+        markdownContent.innerHTML = `<pre>${skill.content}</pre>`;
       }
-      const skill = filtered[gridIdx];
-      if (!skill) return;
 
-      document.getElementById('modalTitle').textContent = skill.name;
-      document.getElementById('modalMeta').innerHTML =
-        `<span>📦 ${skill.category || 'general'}</span>` +
-        `<span>🔖 v${skill.version || '1.0.0'}</span>` +
-        (skill.author && skill.author !== 'unknown'
-          ? `<span>👤 ${escapeHtml(skill.author)}</span>` : '');
-      document.getElementById('modalContent').innerHTML = renderMarkdown(skill.content || '');
-      document.getElementById('modalInstall').innerHTML =
-        `<code>npx skills add https://github.com/hongphuc5497/skills --skill ${skill.name}</code>`;
-      document.getElementById('modalOverlay').classList.add('active');
+      modalOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
+      modalClose.focus();
     }
 
+    // Close Modal
     function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('active');
+      modalOverlay.classList.remove('active');
       document.body.style.overflow = '';
+      currentSkill = null;
+      
+      // Return focus to corresponding card
+      if (currentSkill) {
+        const card = document.getElementById(`skill-card-${currentSkill.name}`);
+        if (card) card.focus();
+      }
     }
 
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeModal();
+    // Copy Function
+    copyBtn.addEventListener('click', () => {
+      const text = installCommand.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtnText.textContent = "Copied!";
+        copyIcon.style.color = "#070913";
+        
+        // Custom bounce animation
+        copyBtn.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          copyBtn.style.transform = "scale(1.02)";
+        }, 100);
+        setTimeout(() => {
+          copyBtn.style.transform = "scale(1)";
+        }, 200);
+
+        setTimeout(() => {
+          copyBtnText.textContent = "Copy Install";
+          copyIcon.style.color = "inherit";
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
     });
 
-    // ── Simple Markdown → HTML ─────────────────────────────────
-    function renderMarkdown(md) {
-      if (!md) return '<em>No content</em>';
-      let html = escapeHtml(md);
-
-      // Code blocks (fenced)
-      html = html.replace(/```(\w*)\n([\s\S]*?)```/g,
-        '<pre><code>$2</code></pre>');
-
-      // Inline code
-      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-      // Bold
-      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-
-      // Headers
-      html = html.replace(/^### (.+)$/gm, '<h3 style="color:#22d3ee;font-size:0.85rem;margin:0.75rem 0 0.25rem">$1</h3>');
-      html = html.replace(/^## (.+)$/gm, '<h3 style="color:#f8fafc;font-size:0.9rem;margin:1rem 0 0.25rem">$1</h3>');
-      html = html.replace(/^# (.+)$/gm, '<h2 style="color:#f8fafc;font-size:1rem;margin:1rem 0 0.5rem">$1</h2>');
-
-      // Tables → simple layout
-      html = html.replace(/\|(.+)\|/g, (match) => {
-        const cells = match.split('|').filter(c => c.trim());
-        const isSep = cells.every(c => /^[-: ]+$/.test(c.trim()));
-        if (isSep) return '';
-        return '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin:0.25rem 0">' +
-          cells.map(c => `<span style="color:#94a3b8;font-size:0.75rem">${c.trim()}</span>`).join('') +
-          '</div>';
+    // Tab Filtering Events
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        activeFilter = e.target.getAttribute('data-category');
+        renderSkills();
       });
+    });
 
-      // Lists
-      html = html.replace(/^- (.+)$/gm, '<li style="margin-left:1rem;color:#94a3b8;font-size:0.78rem">$1</li>');
-      html = html.replace(/^(\d+)\. (.+)$/gm, '<li style="margin-left:1rem;color:#94a3b8;font-size:0.78rem">$1. $2</li>');
+    // Search Input Event
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderSkills();
+    });
 
-      // Links
-      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color:#22d3ee">$1</a>');
+    // Modal Close Events
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+    
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+        closeModal();
+      }
+    });
 
-      // Paragraph breaks
-      html = html.replace(/\n\n+/g, '<br><br>');
-
-      return html;
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    // ── Go ─────────────────────────────────────────────────────
-    init();
+    // Initialize
+    initStats();
+    renderSkills();
   </script>
 </body>
 </html>
