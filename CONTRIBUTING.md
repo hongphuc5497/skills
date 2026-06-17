@@ -30,13 +30,15 @@ skill-name/
 ```yaml
 ---
 name: skill-name
-version: 1.0.0
 description: Clear description of what the skill does and when to use it
+license: MIT
+metadata:
+  version: 1.0.0
 ---
 ```
 
 - `name` must match the parent directory name (lowercase, hyphens)
-- `version` follows semver
+- `metadata.version` follows semver — bump it on every SKILL.md edit
 - Description is a one-liner of what it does
 
 ## Commit Message Convention
@@ -51,7 +53,7 @@ description: Clear description of what the skill does and when to use it
 
 - [ ] SKILL.md with valid YAML frontmatter
 - [ ] Name matches directory name
-- [ ] Version is semver
+- [ ] `metadata.version` is semver
 - [ ] SKILL.md under 500 lines
 - [ ] Optional: docs/README.md for catalog
 
