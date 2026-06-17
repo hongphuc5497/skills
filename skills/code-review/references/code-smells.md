@@ -1,7 +1,5 @@
 # Code Smells Catalog
 
-<!-- ci-drift-test: auto-reverted by upstream-sync workflow (GH_PAT verification) -->
-
 ## Table of Contents
 
 1. [Bloaters](#bloaters)
