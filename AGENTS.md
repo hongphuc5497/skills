@@ -23,7 +23,7 @@ Rules:
 
 **Never edit files outside target skill directory. Never commit.**
 
-# Agent Ops Rules for Codex
+## Agent Ops Rules for Codex
 
 When this repo contains `.ai/protocol.md`, use Agent Ops as the coordination
 protocol.
