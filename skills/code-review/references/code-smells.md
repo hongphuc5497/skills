@@ -1,5 +1,7 @@
 # Code Smells Catalog
 
+<!-- ci-drift-test: this line is auto-reverted by the upstream-sync workflow -->
+
 ## Table of Contents
 
 1. [Bloaters](#bloaters)
