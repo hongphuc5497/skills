@@ -1,0 +1,44 @@
+name: Upstream Sync
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  sync:
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: hongphuc5497/workflows/.github/workflows/upstream-sync.yml@main
+    with:
+      sync-command: "python3 scripts/sync_upstreams.py --apply --pr"
+      python-version: "3.11"
+      pr-base: "main"
+      pr-branch: "chore/upstream-sync"
+      commit-message: "chore(sync): refresh upstream skills"
+      pr-title: "chore(sync): upstream skill drift detected"
+      pr-labels: "automated,upstream-sync"
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
+
+  notify-failure:
+    name: Notify failure
+    needs: [sync]
+    if: ${{ always() && needs.sync.result == 'failure' }}
+    uses: hongphuc5497/workflows/.github/workflows/notify-failure.yml@main
+    with:
+      status: failure
+      repo: ${{ github.repository }}
+      workflow: ${{ github.workflow }}
+      job: sync
+      branch: ${{ github.ref_name }}
+      sha: ${{ github.sha }}
+      actor: ${{ github.actor }}
+      event_name: ${{ github.event_name }}
+      run_number: ${{ github.run_number }}
+      run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
