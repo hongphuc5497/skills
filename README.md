@@ -83,7 +83,7 @@ Standalone, well-tested skills for common development workflows.
 | [**code-review**](skills/code-review/) | Review code changes for bugs, security vulnerabilities, and code quality issues — producing prioritized findings with... |
 | [**context-hub**](skills/context-hub/) | Fetch current API/SDK docs before writing integration code. Use whenever writing code that integrates with an externa... |
 | [**docs-generator**](skills/docs-generator/) | Generate and restructure project documentation into a clear, accessible hierarchy. Use when asked to organize docs, g... |
-| [**idea-validator**](skills/idea-validator/) | Evaluate app ideas and startup concepts across market viability, technical feasibility, and competitive landscape. Us... |
+| [**idea-validator**](skills/idea-validator/) | Validate app/startup ideas with market, feasibility, commercial, and open-source competitor analysis. Use when asked ... |
 | [**oss-ready**](skills/oss-ready/) | Transform a project into a professional open-source repository by adding LICENSE, README, CONTRIBUTING, CODE_OF_CONDU... |
 | [**prd-generator**](skills/prd-generator/) | Generate Product Requirements Documents from `idea.md` and `validate.md` files. Use when asked to create or update a ... |
 | [**quick-healthy-recipes**](skills/quick-healthy-recipes/) | Generate exactly 3 simple, fast, healthy recipes from food photos, ingredient lists, or cravings. Use for what-to-coo... |

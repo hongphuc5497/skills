@@ -12,8 +12,8 @@
 ## Highlights
 
 - Multi-phase evaluation: clarify idea, gather context, research competitors, critical analysis, improvements
-- Web search for real competitors and failed predecessors to avoid reinventing the wheel
-- Rate creativity, feasibility, impact, and technical execution
+- Live web search for commercial competitors, open-source alternatives, and failed predecessors to avoid reinventing the wheel
+- Rate creativity, feasibility, impact, technical execution, and whether to build from scratch or base on existing OSS
 - Deliver a clear verdict: Build it, Maybe, or Skip it
 - Generate improvement suggestions and enhanced roadmap
 
@@ -31,7 +31,7 @@
 ```mermaid
 graph TD
     A["Clarify the Idea"] --> B["Gather Technical Context"]
-    B --> C["Research Competitors"]
+    B --> C["Research Commercial + OSS Competitors"]
     C --> D["Critical Evaluation"]
     D --> E["Rate & Verdict"]
     E --> F["Suggest Improvements"]
@@ -62,5 +62,5 @@ asm install github:luongnv89/skills:skills/idea-validator
 ## Output
 
 - `idea.md` with concept, clarifications, and technical context
-- `validate.md` with competitive landscape, verdict, ratings, market analysis, and improvement roadmap
+- `validate.md` with commercial/OSS competitive landscape, verdict, ratings, market analysis, reuse recommendation, and improvement roadmap
 - Updated README ideas index table with GitHub links

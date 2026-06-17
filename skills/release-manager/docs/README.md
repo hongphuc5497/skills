@@ -11,11 +11,12 @@
 
 ## Highlights
 
-- Subagent architecture: heavy work (scanning, changelog, docs) runs in parallel via isolated subagents
+- Subagent architecture: heavy work (scanning, changelog, docs, landing page) runs in parallel via isolated subagents
 - Analyze commits to suggest the right semver bump (major/minor/patch)
 - Bump version numbers across all project files automatically
 - Generate categorized changelog from git history and GitHub PRs
-- Independent quality review of all release changes before commit
+- Refresh the project landing page (version, download CTA, "What's New") when one exists
+- Independent quality review of all release changes before commit, including cross-agent collision checks
 - Create git tags, push, and publish GitHub Releases with artifacts
 - Publish to PyPI and/or npm registries
 - Detect and defer to existing release tools (semantic-release, changesets, etc.)
@@ -34,6 +35,7 @@
 | "Publish to PyPI" | Build and upload Python package to PyPI |
 | "Publish to npm" | Pack and publish Node.js package to npm |
 | "Update all docs for the release" | Sync documentation with release changes |
+| "Update the landing page too" | Refresh version, download CTA, and "What's New" on the landing page if one exists |
 
 ## How It Works
 
@@ -44,9 +46,11 @@ graph TD
     C --> D["Version Bumper"]
     C --> E["Changelog Generator"]
     C --> F["Docs Updater"]
+    C --> K["Landing Page Updater"]
     D --> G["Collect & Present Results"]
     E --> G
     F --> G
+    K --> G
     G --> H["Release Reviewer"]
     H --> I["Build, Commit, Tag, Push"]
     I --> J["GitHub Release & Publish"]
@@ -79,7 +83,7 @@ asm install github:luongnv89/skills:skills/release-manager
 
 | Path | Description |
 |---|---|
-| `agents/` | Subagent prompts: version-bumper, changelog-generator, docs-updater, release-reviewer |
+| `agents/` | Subagent prompts: version-bumper, changelog-generator, docs-updater, landing-page-updater, release-reviewer |
 | `references/` | Publishing workflows for PyPI and npm |
 
 ## Output
@@ -91,5 +95,6 @@ asm install github:luongnv89/skills:skills/release-manager
 - Git commit tagged with the new version
 - GitHub Release with release notes and optional build artifacts
 - Synced project documentation (API docs, guides, migration notes)
+- Refreshed landing page (version, download CTA, "What's New") when the project ships one
 - Published package on PyPI and/or npm (if applicable)
 - Post-release checklist for follow-up tasks

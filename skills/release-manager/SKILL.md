@@ -4,7 +4,7 @@ description: "Manage software releases end-to-end: bump version, generate change
 license: MIT
 effort: max
 metadata:
-  version: 2.4.1
+  version: 2.5.0
   author: Luong NGUYEN <luongnv89@gmail.com>
 ---
 
@@ -14,7 +14,7 @@ Automate the entire release lifecycle: version bump, changelog, README update, d
 
 ## Architecture (summary)
 
-Main agent orchestrates; heavy steps (scan files, generate changelog, update docs) run as parallel subagents to keep context clean. See `references/orchestration.md` for the full architecture diagram, repo-sync rules, and subagent spawn details. If the Agent tool is unavailable, run the same logic inline.
+Main agent orchestrates; heavy steps (scan files, generate changelog, update docs, update landing page) run as parallel subagents to keep context clean. See `references/orchestration.md` for the full architecture diagram, repo-sync rules, and subagent spawn details. If the Agent tool is unavailable, run the same logic inline.
 
 ## Overview
 
@@ -26,6 +26,7 @@ A release typically involves these steps in order. Walk through each, confirming
 4. **Generate changelog / release notes** — *(subagent)* from git history and PRs
 5. **Update README** — *(subagent, combined with docs)* version badges, changelog entries
 6. **Update documentation** — *(subagent)* sync all project docs
+6b. **Update landing page** — *(subagent, runs in parallel with 3-6)* if the project ships a landing page, refresh its version display, download/install CTA, "What's New", and feature highlights. Clean no-op when there's no landing page. Peer to the docs step, not part of it.
 7. **Build** — run the project's build step if one exists
 8. **Commit, tag, push** — create the release commit and tag
 9. **GitHub Release** — publish on GitHub with release notes
@@ -83,7 +84,7 @@ Present: "Based on N features, M fixes, K breaking changes since vX.Y.Z, I recom
 
 ## Steps 3-6: Parallel Subagent Execution
 
-Once the user confirms the version, spawn the three subagents (`version-bumper`, `changelog-generator`, `docs-updater`) in the same turn for parallel execution. After they finish, optionally spawn `release-reviewer` for a quality check. See `references/orchestration.md` for the full workspace setup, agent spawn parameters, result collection, and apply-changes workflow.
+Once the user confirms the version, spawn the four subagents (`version-bumper`, `changelog-generator`, `docs-updater`, `landing-page-updater`) in the same turn for parallel execution. The `landing-page-updater` first checks whether a landing page exists and skips cleanly if not; it edits only release-narrative content, leaving raw version-string bumps to the `version-bumper` so the two never touch the same line. After they finish, optionally spawn `release-reviewer` for a quality check (it also flags any cross-agent collision). See `references/orchestration.md` for the full workspace setup, agent spawn parameters, result collection, apply order, and apply-changes workflow.
 
 ---
 
@@ -215,4 +216,5 @@ Remind the user about common follow-ups:
 - `agents/version-bumper.md` — Subagent prompt for version string changes
 - `agents/changelog-generator.md` — Subagent prompt for changelog generation
 - `agents/docs-updater.md` — Subagent prompt for documentation updates
+- `agents/landing-page-updater.md` — Subagent prompt for landing-page updates (skips if none exists)
 - `agents/release-reviewer.md` — Subagent prompt for independent quality review

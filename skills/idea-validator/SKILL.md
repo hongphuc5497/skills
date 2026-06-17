@@ -1,11 +1,11 @@
 ---
-name: idea-validator
-description: "Evaluate app ideas and startup concepts across market viability, technical feasibility, and competitive landscape. Use when asked to validate, review, or score a product idea. Don't use for writing a PRD, detailed go-to-market plans, or financial/investor pitch decks."
+name: "idea-validator"
+description: "Validate app/startup ideas with market, feasibility, commercial, and open-source competitor analysis. Use when asked to evaluate, validate, or score a product idea. Don't use for PRDs, go-to-market plans, or investor decks."
 license: MIT
 effort: max
 metadata:
-  version: 1.3.1
-  author: Luong NGUYEN <luongnv89@gmail.com>
+  version: 1.4.0
+  author: "Luong NGUYEN <luongnv89@gmail.com>"
 ---
 
 # Idea Validator
@@ -17,7 +17,7 @@ Critically evaluate ideas with honest feedback on market viability, technical fe
 Trigger this skill when the user asks to:
 - Evaluate, validate, or score an app idea or startup concept
 - Get honest feedback on whether an idea is worth building
-- Research what competitors already exist in a space
+- Research what competitors already exist in a space, including commercial tools/services and open-source alternatives
 - Turn a vague concept into a structured validation report
 
 ## Instructions
@@ -84,38 +84,46 @@ Update `idea.md` technical section.
 
 ## Phase 3: Competitive Landscape Research
 
-Before evaluating the idea, search the internet to find what already exists in the space. This grounds the analysis in real-world data instead of guessing about competitors — it prevents the user from unknowingly building something that's already been done, and reveals gaps they can exploit.
+Before evaluating the idea, perform live web research to find what already exists in the space. Do not rely on memory or training data for market, pricing, traction, competitor, or open-source claims — web search is mandatory so the report reflects the most up-to-date information.
 
-Use WebSearch to find:
+Use the available web search tool (`WebSearch`, `web_search`, or equivalent) to run at least 4-6 varied queries covering:
 
-**Direct competitors** — products/services solving the same problem for the same audience. Search for the core problem statement plus keywords like "app", "tool", "platform", "SaaS", "startup". Try 2-3 different search queries to cover variations (e.g., both the problem description and the solution category).
+**Commercial tools/services** — SaaS products, mobile apps, enterprise platforms, paid APIs, agencies, marketplaces, and other commercial offerings solving the same or adjacent problem. Search the core problem statement plus keywords like "app", "tool", "platform", "SaaS", "startup", "pricing", "alternative", and audience-specific terms.
 
-**Adjacent solutions** — products that solve a related problem or serve the same audience differently. These reveal how users currently cope without the proposed solution.
+**Open-source solutions** — GitHub/GitLab repositories, self-hosted tools, packages, frameworks, templates, and OSS alternatives that solve the same problem or provide a strong foundation. Search with terms like "open source", "GitHub", "self-hosted", "OSS", "alternative", "library", and relevant package registry names. If no credible OSS option is found, document the queries tried and state that no maintained open-source baseline was found.
 
-**Failed attempts** — startups or products that tried something similar and shut down. Search for "[concept] startup failed", "[concept] post-mortem", or check product directories. Understanding why predecessors failed is often more valuable than knowing who succeeded.
+**Adjacent solutions** — products or projects that solve a related problem or serve the same audience differently. These reveal how users currently cope without the proposed solution.
 
-For each competitor found, capture:
+**Failed attempts** — startups, products, or OSS projects that tried something similar and stalled, shut down, or were abandoned. Search for "[concept] startup failed", "[concept] post-mortem", "[concept] abandoned GitHub", or check product directories. Understanding why predecessors failed is often more valuable than knowing who succeeded.
+
+For each competitor or OSS project found, capture:
 - **Name and URL**
+- **Type** (commercial, open-source, hybrid, adjacent, failed/abandoned)
 - **What they do** (one sentence)
-- **Pricing model** (free, freemium, paid, enterprise)
-- **Apparent traction** (user reviews, app store ratings, social media presence, funding if findable)
+- **Pricing or license** (free, freemium, paid, enterprise, OSS license if available)
+- **Traction or health** (reviews, ratings, users, funding, GitHub stars/forks, recent commits, open issues, community activity)
 - **Key weakness or gap** the user's idea could exploit
+- **Reuse/build-on potential** for open-source options (fork, plugin, library dependency, contribution path, or not suitable)
 
-Aim for 3-8 competitors total (direct + adjacent). If fewer than 3 are found, that's a signal — either the market is very niche (potential opportunity) or the search terms need refining.
+Aim for 3-8 total competitors and at least one commercial and one open-source search path. If fewer than 3 credible results are found, that's a signal — either the market is niche, the terms need refining, or the idea may be framed in unfamiliar language.
+
+When an open-source solution already solves a meaningful part of the idea, evaluate more carefully before recommending a greenfield build. Compare license fit, maintenance health, architecture, extensibility, deployment burden, community, and whether the user should build on it, fork it, contribute to it, or differentiate sharply instead of redoing it.
 
 Update `validate.md` with a **## Competitive Landscape** section containing:
-1. A summary table of competitors found
-2. A "white space" analysis — what's missing in the current market
-3. Honest assessment: is the user's differentiation real or imagined given what exists?
+1. A summary table of commercial and open-source competitors found
+2. An **Open-source Alternatives & Reuse Potential** analysis
+3. A "white space" analysis — what's missing in the current market
+4. Honest assessment: is the user's differentiation real or imagined given what exists?
+5. A build-vs-base recommendation when OSS foundations exist
 
-If WebSearch is unavailable, note it in the report and proceed to Phase 4 with best-effort analysis based on general knowledge. Flag that the competitive section should be verified manually.
+If web search is unavailable or blocked, stop and ask the user before proceeding. Do not silently replace live research with general knowledge.
 
 ## Phase 4: Critical Evaluation
 
 Evaluate honestly and update `validate.md`:
 
 **Market Analysis:**
-- Similar existing products
+- Similar commercial products and open-source solutions
 - Market size and competition
 - Unique differentiation
 
@@ -127,6 +135,7 @@ Evaluate honestly and update `validate.md`:
 - Can this ship in 2-4 weeks MVP?
 - Minimum viable features
 - Complex dependencies?
+- Could an existing OSS project be reused, forked, extended, or used as a reference instead of starting from scratch?
 
 **Monetization:**
 - Clear revenue path?
@@ -135,6 +144,11 @@ Evaluate honestly and update `validate.md`:
 **Technical Risk:**
 - Buildable with stated constraints?
 - Key technical risks?
+- License, maintenance, and dependency risks if building on open source?
+
+**Duplication / Reuse Risk:**
+- Is the idea mostly a reimplementation of an existing commercial or OSS solution?
+- Is there a credible build-on, plugin, fork, or contribution path that would reduce risk?
 
 **Verdict:** `Build it` / `Maybe` / `Skip it`
 
@@ -178,12 +192,15 @@ After all phases complete, the output includes:
 
 - **No clear target user**: If the idea is too broad (e.g., "an app for everyone"), push back in Phase 1 — ask the user to name one specific person who has this pain today. Do not proceed to evaluation without a defined user segment.
 - **Duplicate idea already exists**: If Phase 3 research finds a near-identical product, surface it immediately with evidence (URL, feature comparison) and ask whether the user still wants to proceed. Evaluation continues only if the user identifies a genuine differentiator.
+- **Open-source solution already exists**: If Phase 3 finds a maintained OSS project that covers much of the idea, treat "build from scratch" as a higher-risk recommendation. Analyze whether to build on, fork, contribute to, or differentiate from the project before giving a `Build it` verdict.
 - **Technical feasibility unclear**: If the idea requires unproven technology, undisclosed APIs, or capabilities the stated team cannot build, flag it as a hard blocker in Phase 4 and lower the Feasibility score accordingly. Do not give a `Build it` verdict when fundamental technical risk is unresolved.
 
 ## Acceptance Criteria
 
 - [ ] All 5 phases are completed in order (Clarify → Technical Context → Competitive Landscape → Evaluation → Improvements)
-- [ ] Competitive landscape research is performed via web search with at least 2-3 queries; competitors table populated in `validate.md`
+- [ ] Competitive landscape research is performed via live web search with at least 4 varied queries
+- [ ] Commercial tools/services and open-source solutions are both checked; if no credible OSS option is found, the attempted OSS queries are documented
+- [ ] Competitors table and Open-source Alternatives & Reuse Potential analysis are populated in `validate.md`
 - [ ] A clear verdict (`Build it` / `Maybe` / `Skip it`) is given with a supporting rationale
 - [ ] All four ratings (Creativity, Feasibility, Market Impact, Technical Execution) are provided as scores out of 10
 - [ ] `idea.md` and `validate.md` are committed and pushed to the remote repository
@@ -244,12 +261,15 @@ Adapt the check names to match what the step actually validates. Use `√` for p
 ```
 ◆ Competitive Landscape (step 4 of 6 — [idea name])
 ··································································
-  Web searches executed: √ pass ([N] queries run)
-  Competitors found:     √ pass ([N] direct + [N] adjacent)
-  Failed attempts checked: √ pass | × fail — [no results or skipped]
-  validate.md updated:   √ pass | × fail — [missing sections]
+  Web searches executed:  √ pass ([N] live queries run)
+  Commercial coverage:    √ pass ([N] tools/services found)
+  Open-source coverage:   √ pass ([N] OSS options found or no credible result documented)
+  Competitors found:      √ pass ([N] direct + [N] adjacent)
+  Failed attempts checked:√ pass | × fail — [no results or skipped]
+  Reuse potential assessed: √ pass | × fail — [OSS build-on/fork path missing]
+  validate.md updated:    √ pass | × fail — [missing sections]
   ____________________________
-  Result:                PASS | FAIL | PARTIAL
+  Result:                 PASS | FAIL | PARTIAL
 ```
 
 **Phase 4 — Evaluate**
@@ -355,18 +375,27 @@ After all phases:
 
 ## Competitive Landscape
 
-| Competitor | What They Do | Pricing | Traction | Key Weakness |
-|---|---|---|---|---|
-| [Name](URL) | [One sentence] | [Model] | [Evidence] | [Gap to exploit] |
+| Competitor | Type | What They Do | Pricing / License | Traction / Health | Reuse Potential | Key Weakness |
+|---|---|---|---|---|---|---|
+| [Name](URL) | [Commercial / OSS / Hybrid / Adjacent / Failed] | [One sentence] | [Model or license] | [Evidence] | [Fork/build-on/plugin/reference/not suitable] | [Gap to exploit] |
+
+### Commercial Tools & Services
+[Commercial competitors, pricing, traction, and market positioning]
+
+### Open-source Alternatives & Reuse Potential
+[Maintained OSS projects, license/health, and whether to build on, fork, contribute, or avoid rebuilding]
 
 ### White Space Analysis
 [What's missing in the current market]
 
 ### Differentiation Assessment
-[Is the proposed differentiation real or imagined given existing competitors?]
+[Is the proposed differentiation real or imagined given existing commercial and open-source competitors?]
+
+### Build vs. Base Recommendation
+[Whether to build from scratch, build on existing OSS, fork, contribute, or narrow the idea]
 
 ### Failed Predecessors
-[Products that tried and failed — and why]
+[Products or OSS projects that tried and failed, stalled, or were abandoned — and why]
 
 ## Similar Products
 [Competitors]

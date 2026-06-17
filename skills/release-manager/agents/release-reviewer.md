@@ -15,14 +15,17 @@ Read the output files from the workspace:
 - `changelog-generator/changelog-entry.md` — proposed changelog
 - `changelog-generator/changelog-metadata.json` — changelog metadata
 - `docs-updater/docs-changes.json` — proposed doc updates
+- `landing-page-updater/landing-changes.json` — proposed landing-page updates (may have `landing_page_found: false`, in which case there is nothing to review for it)
 
 ### 2. Cross-check consistency
 
 Verify that all outputs are internally consistent:
 
-- **Version consistency:** Does the new version match across all proposed changes? Are there files the version-bumper missed?
+- **Version consistency:** Does the new version match across all proposed changes (version, docs, AND landing page)? Are there files the version-bumper missed?
 - **Changelog completeness:** Does the changelog mention all the features/fixes visible in the git log? Are PR numbers correct? Are authors credited?
 - **Doc coverage:** If the changelog mentions new features or breaking changes, are there corresponding documentation updates? Are installation commands updated?
+- **Landing-page coverage:** If a landing page exists (`landing_page_found: true`), does its release-narrative content (version display, download/install CTA, "What's New") reflect the new version and the headline features from the changelog? If `landing_page_found: false`, confirm the project genuinely has no landing page rather than one the agent missed.
+- **Cross-agent collisions (high severity):** Do two agents target the **same file and line**? The most likely clash is the version-bumper and the landing-page-updater both editing a versioned CTA or install snippet. Flag any such overlap — including entries the landing-page-updater listed under `version_overlap` — so it is applied exactly once, not double-applied or left with a stale `old_line` that no longer matches.
 - **Breaking change handling:** If there are breaking changes, is there a migration guide or upgrade instructions in the changelog?
 
 ### 3. Spot-check against the actual project
@@ -54,7 +57,7 @@ Save to `<WORKSPACE_DIR>/review.json`:
     {
       "severity": "high" | "medium" | "low",
       "category": "consistency" | "completeness" | "formatting" | "correctness",
-      "agent": "version-bumper" | "changelog-generator" | "docs-updater" | "cross-agent",
+      "agent": "version-bumper" | "changelog-generator" | "docs-updater" | "landing-page-updater" | "cross-agent",
       "description": "What's wrong",
       "suggestion": "How to fix it",
       "file": "optional — which file is affected"
