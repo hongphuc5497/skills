@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- New upstream `mattpocock/skills` (productivity group): `grill-me`, `grilling`,
+  `handoff`, `teach`, `writing-great-skills`
 - Interactive skills catalog website under `website/` with generated catalog data
 - Scheduled upstream-sync CI (`.github/workflows/upstream-sync.yml`): weekly drift
   detection that opens a PR when curated skills diverge from upstream, via the shared

@@ -109,5 +109,30 @@
     "repo": "JuliusBrussee/caveman",
     "ref": "main",
     "path": "skills/caveman-stats"
+  },
+  "grill-me": {
+    "repo": "mattpocock/skills",
+    "ref": "main",
+    "path": "skills/productivity/grill-me"
+  },
+  "grilling": {
+    "repo": "mattpocock/skills",
+    "ref": "main",
+    "path": "skills/productivity/grilling"
+  },
+  "handoff": {
+    "repo": "mattpocock/skills",
+    "ref": "main",
+    "path": "skills/productivity/handoff"
+  },
+  "teach": {
+    "repo": "mattpocock/skills",
+    "ref": "main",
+    "path": "skills/productivity/teach"
+  },
+  "writing-great-skills": {
+    "repo": "mattpocock/skills",
+    "ref": "main",
+    "path": "skills/productivity/writing-great-skills"
   }
 }
