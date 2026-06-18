@@ -1,0 +1,41 @@
+name: Stale Task Monitor
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Daily at 9 AM UTC
+  workflow_dispatch:
+
+jobs:
+  check-stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for stale tasks
+        run: |
+          if python3 scripts/agent-ops-tool.py check 2>&1 | grep -q '"stale": true'; then
+            echo "STALE_TASK=true" >> "$GITHUB_ENV"
+            python3 scripts/agent-ops-tool.py status
+            exit 1
+          fi
+          echo "No stale tasks."
+
+  notify-failure:
+    name: Notify failure
+    needs: [check-stale]
+    if: ${{ always() && needs.check-stale.result == 'failure' }}
+    uses: ./.github/workflows/notify-failure.yml
+    with:
+      status: failure
+      repo: ${{ github.repository }}
+      workflow: ${{ github.workflow }}
+      job: check-stale
+      branch: ${{ github.ref_name }}
+      sha: ${{ github.sha }}
+      actor: ${{ github.actor }}
+      event_name: ${{ github.event_name }}
+      run_number: ${{ github.run_number }}
+      run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

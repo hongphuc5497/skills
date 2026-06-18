@@ -5,8 +5,23 @@ integration="${1:-}"
 mode="${2:-}"
 
 if [[ -z "$integration" ]]; then
-  echo "usage: $0 <codex|opencode|augment|openclaw|hermes|claude> [--dry-run]" >&2
+  echo "usage: $0 <list|codex|opencode|augment|openclaw|hermes|claude> [--dry-run]" >&2
   exit 2
+fi
+
+if [[ "$integration" == "list" ]]; then
+  cat <<'EOF'
+Supported Agent Ops integrations:
+
+agent     artifact                                  role
+claude    CLAUDE.md                                 brain or worker
+codex     AGENTS.md                                 default implementer
+opencode  .ai/integrations/opencode-instructions.md isolated implementation lane
+augment   .ai/integrations/augment-discovery.md    codebase navigator
+openclaw  .ai/integrations/openclaw-review.md      product and scope reviewer
+hermes    .ai/integrations/hermes-monitor.md       watcher and notifier
+EOF
+  exit 0
 fi
 
 if [[ "$mode" != "" && "$mode" != "--dry-run" ]]; then
@@ -83,7 +98,7 @@ case "$integration" in
     ;;
   *)
     echo "unknown integration: $integration" >&2
+    echo "run: $0 list" >&2
     exit 2
     ;;
 esac
-

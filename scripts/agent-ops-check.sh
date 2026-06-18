@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-required_files=(
+# Files that are always tracked and must exist in every Agent Ops repo.
+core_files=(
   "TASK.md"
   "ROUTING.md"
   "DECISIONS.md"
-  ".ai/protocol.md"
-  ".ai/schema/task.schema.json"
-  ".ai/schema/file-claims.schema.json"
-  ".ai/schema/handoff.schema.json"
-  ".ai/state/file-claims.json"
-  ".ai/state/handoffs.jsonl"
+  "docs/supported-integrations.md"
   "integrations/README.md"
   "integrations/codex/AGENTS.template.md"
   "integrations/claude/CLAUDE.template.md"
@@ -27,6 +23,16 @@ required_files=(
   ".github/workflows/agent-ops-check.yml"
   ".github/workflows/notify-failure.yml"
   ".github/workflows/stale-task-monitor.yml"
+)
+
+# Files under .ai/. This is the runtime working directory agent-ops manages,
+# and it is gitignored — so it is absent on a clean checkout (CI). Validate it
+# only when it is actually present (e.g. a local run, or a repo that commits it).
+ai_files=(
+  ".ai/protocol.md"
+  ".ai/schema/task.schema.json"
+  ".ai/schema/file-claims.schema.json"
+  ".ai/schema/handoff.schema.json"
   ".ai/workflows/daily.md"
   ".ai/workflows/feature.md"
   ".ai/workflows/debugging.md"
@@ -37,12 +43,25 @@ required_files=(
 )
 
 missing=0
-for file in "${required_files[@]}"; do
+for file in "${core_files[@]}"; do
   if [[ ! -f "$file" ]]; then
     echo "missing required file: $file" >&2
     missing=1
   fi
 done
+
+ai_present=0
+if [[ -f ".ai/protocol.md" ]]; then
+  ai_present=1
+  for file in "${ai_files[@]}"; do
+    if [[ ! -f "$file" ]]; then
+      echo "missing required file: $file" >&2
+      missing=1
+    fi
+  done
+else
+  echo "note: .ai/ not present (runtime dir is gitignored); skipping Agent Ops state checks"
+fi
 
 if [[ "$missing" -ne 0 ]]; then
   exit 1
@@ -69,5 +88,7 @@ fi
 
 bash -n scripts/*.sh
 python3 -m py_compile scripts/agent-ops-tool.py
-python3 scripts/agent-ops-tool.py check >/dev/null
+if [[ "$ai_present" -eq 1 ]]; then
+  python3 scripts/agent-ops-tool.py check >/dev/null
+fi
 echo "agent-ops check passed"
