@@ -59,8 +59,71 @@ if ! git -C "$target_root" rev-parse --git-dir >/dev/null 2>&1; then
   echo "proceeding anyway (--force)" >&2
 fi
 
+# v0.5.0 migration: move Agent Ops files from the repo root into .ai/. We
+# only do this in upgrade mode, and only when the file/dir exists at the old
+# path AND not yet at the new one — so re-running is a safe no-op. Content
+# is preserved verbatim; this is purely a rename.
+#
+# Two migrations in v0.5.0:
+#   1. TASK.md / ROUTING.md / DECISIONS.md → .ai/
+#   2. integrations/ → .ai/integrations/templates/
+migrate_legacy_layout() {
+  local migrated=0
+
+  # Files: TASK.md, ROUTING.md, DECISIONS.md
+  local rel from to
+  for rel in TASK.md ROUTING.md DECISIONS.md; do
+    from="$target_root/$rel"
+    to="$target_root/.ai/$rel"
+    if [[ -f "$from" && ! -f "$to" ]]; then
+      if [[ "$dry_run" -eq 1 ]]; then
+        echo "would move $rel to .ai/$rel"
+      else
+        mkdir -p "$target_root/.ai"
+        # Prefer git mv so history follows the file when the repo tracks
+        # the old path. Fall back to plain mv if git refuses (untracked
+        # file, or repo is in a weird state) — the rename still happens.
+        if git -C "$target_root" mv "$rel" ".ai/$rel" 2>/dev/null; then
+          echo "migrated $rel to .ai/$rel (via git mv)"
+        else
+          mv "$from" "$to"
+          echo "migrated $rel to .ai/$rel"
+        fi
+        migrated=1
+      fi
+    fi
+  done
+
+  # Directory: integrations/ — only the TEMPLATE half. Runtime-written
+  # instances under .ai/integrations/*.md (from `agent-ops install`) stay
+  # at their existing path; only the agent-ops-shipped sources move into
+  # the new .ai/integrations/templates/ subdirectory.
+  if [[ -d "$target_root/integrations" && ! -d "$target_root/.ai/integrations/templates" ]]; then
+    if [[ "$dry_run" -eq 1 ]]; then
+      echo "would move integrations/ to .ai/integrations/templates/"
+    else
+      mkdir -p "$target_root/.ai/integrations"
+      if git -C "$target_root" mv "integrations" ".ai/integrations/templates" 2>/dev/null; then
+        echo "migrated integrations/ to .ai/integrations/templates/ (via git mv)"
+      else
+        mv "$target_root/integrations" "$target_root/.ai/integrations/templates"
+        echo "migrated integrations/ to .ai/integrations/templates/"
+      fi
+      migrated=1
+    fi
+  fi
+
+  if [[ "$migrated" -eq 1 ]]; then
+    echo "note: v0.5.0 consolidated layout — Agent Ops files moved into .ai/; AGENTS.md and CLAUDE.md still live at the repo root"
+  fi
+}
+
+if [[ "$upgrade" -eq 1 ]]; then
+  migrate_legacy_layout
+fi
+
 copy_files=(
-  "ROUTING.md"
+  ".ai/ROUTING.md"
   "docs/supported-integrations.md"
   ".ai/protocol.md"
   ".ai/schema/task.schema.json"
@@ -75,14 +138,15 @@ copy_files=(
   ".ai/templates/task.md"
   ".ai/templates/decision.md"
   ".ai/templates/project-score.md"
-  "integrations/README.md"
-  "integrations/codex/AGENTS.template.md"
-  "integrations/claude/CLAUDE.template.md"
-  "integrations/opencode/instructions.md"
-  "integrations/augment/discovery-guide.md"
-  "integrations/openclaw/review.md"
-  "integrations/hermes/monitor.md"
-  "integrations/mcp/README.md"
+  ".ai/routing.example.json"
+  ".ai/integrations/templates/README.md"
+  ".ai/integrations/templates/codex/AGENTS.template.md"
+  ".ai/integrations/templates/claude/CLAUDE.template.md"
+  ".ai/integrations/templates/opencode/instructions.md"
+  ".ai/integrations/templates/augment/discovery-guide.md"
+  ".ai/integrations/templates/openclaw/review.md"
+  ".ai/integrations/templates/hermes/monitor.md"
+  ".ai/integrations/templates/mcp/README.md"
   "scripts/agent-ops-tool.py"
   "scripts/ao"
   "scripts/install-integration.sh"
@@ -94,8 +158,8 @@ copy_files=(
 )
 
 generated_files=(
-  "TASK.md"
-  "DECISIONS.md"
+  ".ai/TASK.md"
+  ".ai/DECISIONS.md"
   ".ai/state/file-claims.json"
   ".ai/state/handoffs.jsonl"
 )
@@ -103,7 +167,7 @@ generated_files=(
 get_default_content() {
   local rel="$1"
   case "$rel" in
-    TASK.md)
+    .ai/TASK.md)
       printf '%s\n' \
         "# Active Task" \
         "" \
@@ -124,7 +188,7 @@ get_default_content() {
         "  concern unless ownership is transferred." \
         "- Finish or park the active task before starting another."
       ;;
-    DECISIONS.md)
+    .ai/DECISIONS.md)
       printf '%s\n' \
         "# Decisions" \
         "" \

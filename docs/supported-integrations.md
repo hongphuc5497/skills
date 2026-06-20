@@ -2,8 +2,8 @@
 
 Agent Ops has two integration surfaces:
 
-1. Install integration: files that teach an agent to follow the repo protocol.
-2. Live coordination: runtime behavior once the agent is participating in a task.
+1. **Install integration**: files that teach an agent to follow the repo protocol.
+2. **Live coordination**: runtime behavior once the agent is participating in a task.
 
 Keep these separate. Adding an install template for an agent does not mean Agent
 Ops can drive or inspect that agent's live sessions. This mirrors the useful
@@ -29,6 +29,41 @@ separate systems.
 | OpenClaw | Advisory | `agent-ops install openclaw` | Writes `.ai/integrations/openclaw-review.md` | Product, scope, and review critic |
 | Hermes | Watcher | `agent-ops install hermes` | Writes `.ai/integrations/hermes-monitor.md` | Stale-task monitor and notifier |
 
+## What each agent reads and writes
+
+This is the contract you can rely on when an agent participates in a task. If
+an agent is not listed as writing a file, it should never modify that file
+even with explicit user permission — that boundary is what makes Agent Ops a
+coordination tool instead of a chaos tool.
+
+| Agent | Reads | Writes (when active owner) | Never writes |
+| --- | --- | --- | --- |
+| Codex | `AGENTS.md`, `.ai/TASK.md`, `.ai/ROUTING.md`, `.ai/state/*` | Anything claimed for the active task, `.ai/state/*` via `ao` commands | Files claimed by another task |
+| Claude Code | `CLAUDE.md`, `.ai/TASK.md`, `.ai/ROUTING.md`, `.ai/state/*` | Anything claimed for the active task, `.ai/state/*` via `ao` commands | Files claimed by another task |
+| OpenCode | `.ai/integrations/opencode-instructions.md`, the delegated file set | Only the delegated file set, via `ao handoff` return | Anything outside its handoff |
+| Augment | Full repo (read-only by default) | — | Implementation files, `.ai/state/*` |
+| OpenClaw | The plan, the changed diff, `.ai/ROUTING.md`, `.ai/DECISIONS.md` | `.ai/integrations/openclaw-review.md` only | Implementation files, `.ai/state/*` |
+| Hermes | `.ai/state/active-task.json`, `.ai/state/handoffs.jsonl` | Notification channels only | Repo files, `.ai/state/*` |
+
+## How to learn the protocol fast
+
+```bash
+agent-ops init --interactive   # picks agents to install and seeds a tutorial
+agent-ops tutorial             # add the tutorial later, post-init
+agent-ops doctor               # diagnostics if anything looks off
+```
+
+The tutorial runs the actual coordination loop — claim, delegate, finish — on
+a fake task so you learn the commands without risking real code.
+
+## Routing tasks to the right agent
+
+Built-in routing matches keywords like `bug` / `review` / `experiment` to a
+default owner + workflow. To override per-repo (e.g., always route to
+Claude, or add a `security` category), drop a `.ai/routing.json` file. See
+[docs/routing.md](routing.md) for the schema; `agent-ops init` ships a copy
+of `.ai/routing.example.json` you can adapt.
+
 List the same support surface from the shell:
 
 ```bash
@@ -46,7 +81,7 @@ Before adding a new agent, answer these separately:
 
 Then make the smallest file-first change:
 
-1. Add `integrations/<agent>/...` instructions.
+1. Add `.ai/integrations/templates/<agent>/...` instructions.
 2. Add one case to `scripts/install-integration.sh`.
 3. Add the copied file to `scripts/init-repo.sh` if seeded repos need it.
 4. Update this matrix and the quick reference in `docs/plug-and-play.md`.

@@ -26,6 +26,7 @@ Usage:
              [--verification <text>] [--notes <text>]
   ao finish done|parked|killed [--verification <text>]
   ao check
+  ao doctor
   ao version
   ao help
 
@@ -38,13 +39,14 @@ Commands:
   delegate  Auto-route a sub-task and record delegation handoff
   finish    Complete, park, or kill the active task
   check     Verify protocol health (files, schemas, stale tasks)
+  doctor    Print environment + state diagnostics for bug reports
   version   Print ao version
   help      Show this help
 EOF
 }
 
 version() {
-    echo "ao 0.1.0"
+    echo "ao 0.2.0"
 }
 
 # --- main -----------------------------------------------------------
@@ -55,7 +57,7 @@ if [[ ! -f "$BRIDGE" ]]; then
 fi
 
 case "${1:-}" in
-    status|route|start|claim|handoff|delegate|finish|check)
+    status|route|start|claim|handoff|delegate|finish|check|doctor)
         exec python3 "$BRIDGE" "$@"
         ;;
     version)

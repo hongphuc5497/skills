@@ -19,6 +19,6 @@ Return with:
 - result
 - risks
 
-Do not update `TASK.md`, `ROUTING.md`, or `DECISIONS.md` unless those files are
-explicitly delegated.
+Do not update `.ai/TASK.md`, `.ai/ROUTING.md`, or `.ai/DECISIONS.md` unless
+those files are explicitly delegated.
 

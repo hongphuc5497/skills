@@ -49,7 +49,7 @@ copy_file() {
 
 case "$integration" in
   codex)
-    src="integrations/codex/AGENTS.template.md"
+    src=".ai/integrations/templates/codex/AGENTS.template.md"
     if [[ ! -f "$src" ]]; then
       echo "missing $src" >&2
       exit 1
@@ -67,19 +67,19 @@ case "$integration" in
     fi
     ;;
   opencode)
-    copy_file "integrations/opencode/instructions.md" ".ai/integrations/opencode-instructions.md"
+    copy_file ".ai/integrations/templates/opencode/instructions.md" ".ai/integrations/opencode-instructions.md"
     ;;
   augment)
-    copy_file "integrations/augment/discovery-guide.md" ".ai/integrations/augment-discovery.md"
+    copy_file ".ai/integrations/templates/augment/discovery-guide.md" ".ai/integrations/augment-discovery.md"
     ;;
   openclaw)
-    copy_file "integrations/openclaw/review.md" ".ai/integrations/openclaw-review.md"
+    copy_file ".ai/integrations/templates/openclaw/review.md" ".ai/integrations/openclaw-review.md"
     ;;
   hermes)
-    copy_file "integrations/hermes/monitor.md" ".ai/integrations/hermes-monitor.md"
+    copy_file ".ai/integrations/templates/hermes/monitor.md" ".ai/integrations/hermes-monitor.md"
     ;;
   claude)
-    src="integrations/claude/CLAUDE.template.md"
+    src=".ai/integrations/templates/claude/CLAUDE.template.md"
     if [[ ! -f "$src" ]]; then
       echo "missing $src" >&2
       exit 1

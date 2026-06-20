@@ -5,7 +5,7 @@ protocol.
 
 Before editing:
 
-1. Read `.ai/protocol.md`, `TASK.md`, and `ROUTING.md`.
+1. Read `.ai/protocol.md`, `.ai/TASK.md`, and `.ai/ROUTING.md`.
 2. Run `scripts/agent-ops-tool.py status` when available.
 3. If no task is active and the user requested implementation, start one with
    `scripts/agent-ops-tool.py start`.
