@@ -2,19 +2,11 @@
 set -euo pipefail
 
 # Files that are always tracked and must exist in every Agent Ops repo.
+# These live OUTSIDE .ai/, so they are committed even when a target repo
+# gitignores the whole .ai/ runtime directory (the default `agent-ops init`
+# layout). They are required unconditionally.
 core_files=(
-  ".ai/TASK.md"
-  ".ai/ROUTING.md"
-  ".ai/DECISIONS.md"
   "docs/supported-integrations.md"
-  ".ai/integrations/templates/README.md"
-  ".ai/integrations/templates/codex/AGENTS.template.md"
-  ".ai/integrations/templates/claude/CLAUDE.template.md"
-  ".ai/integrations/templates/opencode/instructions.md"
-  ".ai/integrations/templates/augment/discovery-guide.md"
-  ".ai/integrations/templates/openclaw/review.md"
-  ".ai/integrations/templates/hermes/monitor.md"
-  ".ai/integrations/templates/mcp/README.md"
   "scripts/agent-ops-tool.py"
   "scripts/ao"
   "scripts/install-integration.sh"
@@ -25,11 +17,19 @@ core_files=(
   ".github/workflows/stale-task-monitor.yml"
 )
 
-# Files under .ai/. This is the runtime working directory agent-ops manages,
-# and it is gitignored — so it is absent on a clean checkout (CI). Validate it
-# only when it is actually present (e.g. a local run, or a repo that commits it).
+# Files under .ai/. This is the runtime/source directory agent-ops manages, and
+# `agent-ops init` gitignores it by default — so on a clean checkout (e.g. CI in
+# a target repo) it is absent. Validate these only when .ai/ is actually
+# committed, detected via the .ai/protocol.md sentinel. A repo that commits the
+# .ai/ source (like this one) gets full validation; a repo that gitignores it
+# (the default) skips these and still passes. TASK.md/DECISIONS.md are user data
+# and the integration templates are protocol source — both belong here, NOT in
+# core_files, so a gitignored-.ai/ target repo isn't forced to commit them.
 ai_files=(
   ".ai/protocol.md"
+  ".ai/TASK.md"
+  ".ai/ROUTING.md"
+  ".ai/DECISIONS.md"
   ".ai/schema/task.schema.json"
   ".ai/schema/file-claims.schema.json"
   ".ai/schema/handoff.schema.json"
@@ -40,6 +40,14 @@ ai_files=(
   ".ai/workflows/review.md"
   ".ai/workflows/experimentation.md"
   ".ai/templates/project-score.md"
+  ".ai/integrations/templates/README.md"
+  ".ai/integrations/templates/codex/AGENTS.template.md"
+  ".ai/integrations/templates/claude/CLAUDE.template.md"
+  ".ai/integrations/templates/opencode/instructions.md"
+  ".ai/integrations/templates/augment/discovery-guide.md"
+  ".ai/integrations/templates/openclaw/review.md"
+  ".ai/integrations/templates/hermes/monitor.md"
+  ".ai/integrations/templates/mcp/README.md"
 )
 
 missing=0
