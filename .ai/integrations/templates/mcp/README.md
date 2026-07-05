@@ -1,24 +1,57 @@
-# MCP Integration
+# Agent Ops over MCP
 
-The MVP exposes a JSON command bridge at `scripts/agent-ops-tool.py`. This is
-not a full MCP server yet. It is deliberately smaller:
+`agent-ops mcp` is a stdio MCP server exposing the coordination protocol as
+native tools: `status`, `route`, `start`, `claim`, `release`, `handoff`,
+`finish`, `check`, `doctor`. It wraps the repo-vendored
+`scripts/agent-ops-tool.py`, so tool results are exactly the CLI's JSON —
+the MCP surface and the CLI can never disagree.
 
-- no Python dependencies
-- no background daemon
-- JSON in, JSON out
-- works from any coding agent that can run shell commands
+## Claude Code
 
-Future MCP tools should wrap the same commands:
+```bash
+# project scope (run inside the repo)
+claude mcp add agent-ops -- npx -y @hongphuc5497/agent-ops@latest mcp
+```
 
-| MCP Tool | Bridge Command |
-| --- | --- |
-| `agent_ops.status` | `scripts/agent-ops-tool.py status` |
-| `agent_ops.route_task` | `scripts/agent-ops-tool.py route` |
-| `agent_ops.start_task` | `scripts/agent-ops-tool.py start` |
-| `agent_ops.claim_files` | `scripts/agent-ops-tool.py claim` |
-| `agent_ops.handoff` | `scripts/agent-ops-tool.py handoff` |
-| `agent_ops.finish_task` | `scripts/agent-ops-tool.py finish` |
-| `agent_ops.check` | `scripts/agent-ops-tool.py check` |
+Or in `.mcp.json` at the repo root:
 
-Build a true MCP server only after this bridge is useful in two real repos.
+```json
+{
+  "mcpServers": {
+    "agent-ops": {
+      "command": "npx",
+      "args": ["-y", "@hongphuc5497/agent-ops@latest", "mcp"]
+    }
+  }
+}
+```
 
+## Codex
+
+In `~/.codex/config.toml` (Codex does not guarantee cwd, so pass `--repo`):
+
+```toml
+[mcp_servers.agent-ops]
+command = "npx"
+args = ["-y", "@hongphuc5497/agent-ops@latest", "mcp", "--repo", "/abs/path/to/repo"]
+```
+
+## Identity
+
+Each agent must know who it is so claims and the pre-commit hook work:
+
+```bash
+AGENT_OPS_OWNER=claude   # per-process — correct when agents share one checkout
+git config agent-ops.owner <name>   # repo-wide human fallback
+```
+
+Precedence: `AGENT_OPS_OWNER` > `git config agent-ops.owner`.
+
+## Notes
+
+- `--repo <path>` defaults to the server's cwd; the server refuses to start
+  against a repo without `.ai/protocol.md` (run `agent-ops init` first).
+- If the repo's vendored tool version differs from the npm package version,
+  the `status` tool result carries a warning — run `agent-ops upgrade`.
+- Tool errors (claim conflicts, no active task) come back as `isError` tool
+  results with the CLI's structured JSON, including `remedy` hints.

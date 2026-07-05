@@ -291,7 +291,12 @@ write_file() {
 # leaks local paths and workflow metadata, especially in public repos.
 ensure_gitignore() {
   local gi="$target_root/.gitignore"
-  if [[ -f "$gi" ]] && grep -qE '^/?\.ai/?$' "$gi"; then
+  # Already managed? Accept both forms: the blanket `.ai/` (default) AND the
+  # allowlist anchor `.ai/*` used by repos that commit some .ai/ source while
+  # ignoring runtime state (e.g. `.ai/*` followed by `!.ai/...` rules). Matching
+  # only the blanket form here would wrongly append a redundant `.ai/` after an
+  # allowlist, re-ignoring the very files the `!` rules un-ignore.
+  if [[ -f "$gi" ]] && grep -qE '^/?\.ai(/\*?)?$' "$gi"; then
     echo ".gitignore already ignores .ai/"
     return 0
   fi
@@ -346,5 +351,10 @@ if [[ "$upgrade" -eq 1 ]]; then
   echo "Next: cd $target_root && ./scripts/agent-ops-check.sh"
 else
   echo "Agent Ops initialized in $target_root"
-  echo "Next: cd $target_root && ./scripts/install-integration.sh codex --dry-run"
+  echo "Next steps:"
+  echo "  cd $target_root"
+  echo "  ./scripts/install-integration.sh codex --dry-run   # teach an agent the protocol"
+  echo "  ./scripts/ao hook install                          # enforce claims at commit time"
+  echo "  claude mcp add agent-ops -- npx -y @hongphuc5497/agent-ops@latest mcp   # native MCP tools"
+  echo "  export AGENT_OPS_OWNER=<agent-name>                # identity per agent process"
 fi

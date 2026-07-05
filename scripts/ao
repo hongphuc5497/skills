@@ -19,6 +19,9 @@ Usage:
                   [--verification <text>] [--files <glob>...]
                   [--out-of-scope <glob>...]
   ao claim <paths...> [--owner <agent>] [--reason <text>]
+  ao claim --release <paths...> [--owner <agent>] [--force --reason <why>]
+  ao hook install|uninstall [--dry-run]
+  ao claims-check --stdin [-z]   (pre-commit hook backend)
   ao handoff --to <agent> --acceptance <text> [--from-owner <agent>]
              [--files <path>...] [--verification <text>] [--notes <text>]
   ao delegate <description> [--to <agent>] [--from-owner <agent>]
@@ -57,7 +60,7 @@ if [[ ! -f "$BRIDGE" ]]; then
 fi
 
 case "${1:-}" in
-    status|route|start|claim|handoff|delegate|finish|check|doctor)
+    status|route|start|claim|handoff|delegate|finish|check|doctor|claims-check|hook)
         exec python3 "$BRIDGE" "$@"
         ;;
     version)

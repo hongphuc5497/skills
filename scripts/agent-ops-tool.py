@@ -14,9 +14,11 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import fnmatch
 import json
 import os
 import platform
+import posixpath
 import re
 import shutil
 import subprocess
@@ -52,7 +54,7 @@ LEGACY_ROUTING_MD = ROOT / "ROUTING.md"
 LEGACY_DECISIONS_MD = ROOT / "DECISIONS.md"
 LEGACY_INTEGRATIONS_DIR = ROOT / "integrations"
 TASK_ID_RE = re.compile(r"^[0-9]{8}-[0-9]{6}-[a-z0-9-]+$")
-TOOL_VERSION = "0.5.2"
+TOOL_VERSION = "0.6.0"
 
 
 def now() -> str:
@@ -87,8 +89,23 @@ def state_lock() -> Iterator[None]:
     """
     ensure_dirs()
     if fcntl is None:
-        yield
-        return
+        # No advisory locking on this platform. Silent unlocked mutation lets
+        # two concurrent agents both pass a conflict check and both write —
+        # exactly the race this protocol exists to prevent. Refuse loudly.
+        if os.environ.get("AGENT_OPS_UNSAFE_NO_LOCK") == "1":
+            yield
+            return
+        emit(
+            {
+                "ok": False,
+                "error": "state locking is unavailable on this platform (no fcntl); refusing to mutate state",
+                "remedy": (
+                    "read-only commands (status/check/doctor) still work; "
+                    "set AGENT_OPS_UNSAFE_NO_LOCK=1 to override — unsafe when more than one agent runs concurrently"
+                ),
+            },
+            1,
+        )
     with STATE_LOCK.open("a+") as handle:
         fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
         try:
@@ -336,7 +353,7 @@ Verification: {task.get("verification", "")}
 
 ## Acceptance Criteria
 
-- TODO
+-
 
 ## Files In Scope
 
@@ -500,13 +517,60 @@ def check_payload() -> dict[str, Any]:
     task = active_task()
     if task:
         stale = task_age_hours(task) > 48
+    claims = claims_health()
     return {
         "ok": not missing and not stale and not invalid_json and not invalid_jsonl,
         "missing": missing,
         "invalid_json": invalid_json,
         "invalid_jsonl": invalid_jsonl,
         "stale": stale,
+        # Warnings never flip ok — recovery guidance, not a gate.
+        "warnings": {
+            "orphan_claims": claims["orphans"],
+            "remedy": (
+                "release with `agent-ops claim --release <paths>` (or --force --reason for another owner's claims)"
+                if claims["orphans"]
+                else ""
+            ),
+        },
     }
+
+
+def claim_age_hours(claim: dict[str, Any]) -> float:
+    created = claim.get("created_at", "")
+    try:
+        then = datetime.fromisoformat(created)
+    except (ValueError, TypeError):
+        return 0.0
+    if then.tzinfo is None:
+        then = then.replace(tzinfo=timezone.utc)
+    return (datetime.now(timezone.utc) - then).total_seconds() / 3600
+
+
+def claims_health(staleness_hours: float = 24.0) -> dict[str, list[dict[str, Any]]]:
+    """Classify claims for recovery: stale (older than the window) and
+    orphans (task neither active nor merely-old — the crashed/finished case).
+
+    Claims can only be created against the active task, so any claim whose
+    task_id is not the current active task is a leftover: either its task
+    finished without clearing it (bug/crash mid-finish) or the agent died.
+    """
+    if not CLAIMS_FILE.exists():
+        return {"stale": [], "orphans": []}
+    payload = read_json(CLAIMS_FILE, {"claims": []})
+    claims = payload.get("claims", []) if isinstance(payload, dict) else []
+    task = active_task()
+    active_id = task["id"] if task else ""
+    stale: list[dict[str, Any]] = []
+    orphans: list[dict[str, Any]] = []
+    for claim in claims:
+        if not isinstance(claim, dict):
+            continue
+        if claim.get("task_id") != active_id:
+            orphans.append(claim)
+        elif claim_age_hours(claim) > staleness_hours:
+            stale.append(claim)
+    return {"stale": stale, "orphans": orphans}
 
 
 def read_handoffs() -> list[dict[str, Any]]:
@@ -763,7 +827,307 @@ Risks:
     emit({"ok": True, "task": task})
 
 
+def normalize_claim_path(path: str) -> str:
+    # Collapse `./`, `foo/../`, and duplicate slashes so filesystem-equivalent
+    # spellings (`src/./foo.ts`, `src//foo.ts`) land on the same claim key.
+    # posixpath.normpath leaves glob metacharacters untouched.
+    path = path.strip()
+    if not path:
+        return ""
+    path = posixpath.normpath(path)
+    return path.rstrip("/") if path != "/" else path
+
+
+GLOB_CHARS = set("*?[")
+
+
+def glob_literal_prefix(pattern: str) -> str:
+    for i, ch in enumerate(pattern):
+        if ch in GLOB_CHARS:
+            return pattern[:i]
+    return pattern
+
+
+def claim_paths_overlap(a: str, b: str) -> bool:
+    """Return True when two claim paths could cover the same files.
+
+    Claims are glob-like: literal paths (`src/foo.ts`), globs (`tests/*`),
+    or directories (`tests/` or `tests`). Overlap holds when either pattern
+    matches the other, one is a directory prefix of the other, or — for two
+    glob patterns — their literal prefixes are prefix-compatible (a
+    conservative stand-in for full pattern intersection: it flags
+    `web/kanban/*.js` vs `web/kanban/app.*` while keeping `src/a*` vs
+    `src/b*` disjoint). False positives err toward safety for a lock system.
+    """
+    a = normalize_claim_path(a)
+    b = normalize_claim_path(b)
+    if not a or not b:
+        return False
+    # `.` or `/` claims the whole repo.
+    if a in (".", "/") or b in (".", "/"):
+        return True
+    if a == b:
+        return True
+    # fnmatch's `*` crosses `/`, so `tests/*` also covers `tests/sub/file`.
+    # fnmatchcase keeps matching case-sensitive and slash-literal on every
+    # OS — plain fnmatch folds case on Windows/macOS and would give the
+    # same claims file different verdicts per platform.
+    if fnmatch.fnmatchcase(a, b) or fnmatch.fnmatchcase(b, a):
+        return True
+    # Directory containment: `tests` claims everything under tests/.
+    if a.startswith(b + "/") or b.startswith(a + "/"):
+        return True
+    # Glob-vs-glob: conflict when one literal prefix extends the other.
+    if any(ch in GLOB_CHARS for ch in a) and any(ch in GLOB_CHARS for ch in b):
+        pa, pb = glob_literal_prefix(a), glob_literal_prefix(b)
+        if pa.startswith(pb) or pb.startswith(pa):
+            return True
+    return False
+
+
+def claims_overlap(requested: list[str], existing: list[str]) -> bool:
+    return any(claim_paths_overlap(r, e) for r in requested for e in existing)
+
+
+def resolve_agent_owner() -> str:
+    """Resolve the identity of the agent running this process.
+
+    Precedence: AGENT_OPS_OWNER env var (per-process, correct when several
+    agents share one checkout), then `git config agent-ops.owner` (repo-wide,
+    the human-committer fallback). Empty string when neither is set.
+    """
+    env_owner = os.environ.get("AGENT_OPS_OWNER", "").strip()
+    if env_owner:
+        return env_owner
+    try:
+        result = subprocess.run(
+            ["git", "config", "agent-ops.owner"],
+            capture_output=True, text=True, cwd=str(ROOT),
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except OSError:
+        pass
+    return ""
+
+
+def command_release(args: argparse.Namespace) -> None:
+    """Drop claims without finishing a task — the crash-recovery path.
+
+    Deliberately works with NO active task: the whole point is releasing
+    claims left behind by a crashed or finished-elsewhere task. Owner must
+    match the claim owner unless --force (which requires --reason and is
+    audited to handoffs.jsonl).
+    """
+    ensure_dirs()
+    if args.force and not (args.reason or "").strip():
+        emit({"ok": False, "error": "--force requires --reason for the audit trail"}, 1)
+    owner = args.owner or resolve_agent_owner()
+    if not owner and not args.force:
+        emit(
+            {
+                "ok": False,
+                "error": "cannot determine releasing owner",
+                "remedy": "pass --owner, set AGENT_OPS_OWNER, or `git config agent-ops.owner <name>`",
+            },
+            1,
+        )
+    requested = [normalize_claim_path(p) for p in (args.paths or [])]
+    if not args.release_all and not requested:
+        emit({"ok": False, "error": "pass paths to release, or --all"}, 1)
+    with state_lock():
+        payload = claims_payload()
+        kept: list[dict[str, Any]] = []
+        released: list[dict[str, Any]] = []
+        denied: list[dict[str, Any]] = []
+        for claim in payload["claims"]:
+            claim_owner = claim.get("owner", "")
+            paths = list(claim.get("paths", []))
+            if args.release_all:
+                matched = paths
+            else:
+                matched = [p for p in paths if normalize_claim_path(p) in requested]
+            if not matched:
+                kept.append(claim)
+                continue
+            if claim_owner != owner and not args.force:
+                denied.append(claim)
+                kept.append(claim)
+                continue
+            remaining = [p for p in paths if p not in matched]
+            released.append({**claim, "paths": matched})
+            if remaining:
+                kept.append({**claim, "paths": remaining})
+        if denied and not released:
+            emit(
+                {
+                    "ok": False,
+                    "error": "claims are owned by someone else",
+                    "denied": denied,
+                    "remedy": "ask the owner, or use --force --reason '<why>' for emergency recovery",
+                },
+                1,
+            )
+        payload["claims"] = kept
+        write_json(CLAIMS_FILE, payload)
+        if args.force and released:
+            # Forced releases are audited as handoff events (schema-compatible:
+            # from/to/task_id/created_at) so they show in the log and kanban.
+            for claim in released:
+                append_jsonl(HANDOFFS_FILE, {
+                    "from": owner or "unknown",
+                    "to": claim.get("owner", "unknown"),
+                    "task_id": claim.get("task_id", "unknown"),
+                    "files": claim.get("paths", []),
+                    "acceptance": "",
+                    "verification": "",
+                    "notes": f"forced claim release: {args.reason}",
+                    "created_at": now(),
+                })
+    emit({"ok": True, "released": released, "denied": denied})
+
+
+def command_claims_check(args: argparse.Namespace) -> None:
+    """Check staged paths against claims — the pre-commit hook backend.
+
+    Reads newline- (or NUL- with -z) delimited paths from stdin, resolves the
+    committing agent's identity, and fails when any path overlaps a claim by
+    a different owner. Read-only: never takes the state lock.
+    """
+    raw = sys.stdin.buffer.read().decode("utf-8", errors="replace")
+    sep = "\0" if args.null else "\n"
+    staged = [p for p in (s.strip() for s in raw.split(sep)) if p]
+    payload = claims_payload()
+    claims = payload["claims"]
+    if not claims or not staged:
+        emit({"ok": True, "conflicts": [], "checked": len(staged)})
+    owner = resolve_agent_owner()
+    if not owner:
+        emit(
+            {
+                "ok": False,
+                "error": "claims exist but the committing agent's identity is unknown",
+                "remedy": (
+                    "set AGENT_OPS_OWNER=<name> (per-agent, correct for shared checkouts) "
+                    "or `git config agent-ops.owner <name>` (human fallback); "
+                    "precedence: AGENT_OPS_OWNER > git config"
+                ),
+            },
+            1,
+        )
+    conflicts: list[dict[str, Any]] = []
+    for path in staged:
+        for claim in claims:
+            if claim.get("owner") == owner:
+                continue
+            if any(claim_paths_overlap(path, claimed) for claimed in claim.get("paths", [])):
+                conflicts.append({
+                    "path": path,
+                    "owner": claim.get("owner", "unknown"),
+                    "task_id": claim.get("task_id", ""),
+                    "claimed": claim.get("paths", []),
+                })
+    if conflicts:
+        emit(
+            {
+                "ok": False,
+                "error": "staged files are claimed by another agent",
+                "identity": owner,
+                "conflicts": conflicts,
+                "remedy": (
+                    "ask the owning agent to finish or release, run "
+                    "`agent-ops claim --release <paths>` if the claim is stale, "
+                    "or bypass once with AGENT_OPS_SKIP_HOOK=1 (logged)"
+                ),
+            },
+            1,
+        )
+    emit({"ok": True, "conflicts": [], "checked": len(staged), "identity": owner})
+
+
+HOOK_MARKER = "# agent-ops pre-commit hook"
+HOOK_SCRIPT = """#!/bin/sh
+# agent-ops pre-commit hook
+# Blocks commits touching files claimed by a different agent.
+# Bypass once: AGENT_OPS_SKIP_HOOK=1 git commit ...
+if [ "$AGENT_OPS_SKIP_HOOK" = "1" ]; then
+  echo "agent-ops: hook bypassed (AGENT_OPS_SKIP_HOOK=1)" >&2
+  exit 0
+fi
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "agent-ops: python3 not found on PATH — skipping claim check" >&2
+  exit 0
+fi
+[ -f scripts/agent-ops-tool.py ] || exit 0
+# Quiet on success; the structured conflict report goes to stderr on block.
+out=$(git diff --cached --name-only -z | python3 scripts/agent-ops-tool.py claims-check --stdin -z 2>&1) || {
+  echo "$out" >&2
+  exit 1
+}
+"""
+
+
+def hooks_dir() -> Path:
+    result = subprocess.run(
+        ["git", "rev-parse", "--git-path", "hooks"],
+        capture_output=True, text=True, cwd=str(ROOT),
+    )
+    if result.returncode != 0:
+        emit({"ok": False, "error": "not a git repository (git rev-parse failed)"}, 1)
+    raw = result.stdout.strip()
+    return Path(raw) if os.path.isabs(raw) else ROOT / raw
+
+
+def command_hook(args: argparse.Namespace) -> None:
+    target = hooks_dir() / "pre-commit"
+    if args.action == "uninstall":
+        if not target.exists():
+            emit({"ok": True, "message": "no pre-commit hook installed"})
+        content = target.read_text()
+        if HOOK_MARKER not in content:
+            emit(
+                {
+                    "ok": False,
+                    "error": f"{target} exists but was not installed by agent-ops; refusing to remove",
+                },
+                1,
+            )
+        if args.dry_run:
+            emit({"ok": True, "dry_run": True, "would_remove": str(target)})
+        target.unlink()
+        emit({"ok": True, "removed": str(target)})
+    # install
+    if target.exists():
+        content = target.read_text()
+        if HOOK_MARKER in content:
+            emit({"ok": True, "message": "agent-ops pre-commit hook already installed", "path": str(target)})
+        emit(
+            {
+                "ok": False,
+                "error": f"a pre-commit hook already exists at {target} (husky or custom?)",
+                "remedy": (
+                    "add this line to your existing hook instead: "
+                    "git diff --cached --name-only -z | python3 scripts/agent-ops-tool.py claims-check --stdin -z"
+                ),
+            },
+            1,
+        )
+    if args.dry_run:
+        emit({"ok": True, "dry_run": True, "would_write": str(target)})
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(HOOK_SCRIPT)
+    target.chmod(0o755)
+    emit({"ok": True, "installed": str(target)})
+
+
 def command_claim(args: argparse.Namespace) -> None:
+    if getattr(args, "release", False) or getattr(args, "release_all", False):
+        command_release(args)
+        return
+    if not args.paths:
+        emit({"ok": False, "error": "pass at least one path to claim"}, 1)
+    if args.reason is None:
+        args.reason = "active implementation"
     ensure_dirs()
     # Hold the lock across the conflict check AND the write so two concurrent
     # agents claiming overlapping paths cannot both pass the check before
@@ -773,16 +1137,24 @@ def command_claim(args: argparse.Namespace) -> None:
         if not task:
             emit({"ok": False, "error": "cannot claim files without active task"}, 1)
         owner = args.owner or task["owner"]
+        # Reject paths that normalize to nothing before they reach the state
+        # file — a stored empty path fails validation on every later read and
+        # bricks claim/status until the file is hand-edited.
+        invalid = [p for p in args.paths if not normalize_claim_path(p)]
+        if invalid:
+            emit({"ok": False, "error": "claim paths must be non-empty", "invalid_paths": invalid}, 1)
         payload = claims_payload()
         existing_claims = payload["claims"]
-        requested = set(args.paths)
+        requested = list(args.paths)
 
         conflicts: list[dict[str, Any]] = []
         for claim in existing_claims:
-            existing = set(claim.get("paths", []))
-            if claim.get("task_id") != task["id"] and requested.intersection(existing):
+            existing = claim.get("paths", [])
+            if not claims_overlap(requested, existing):
+                continue
+            if claim.get("task_id") != task["id"]:
                 conflicts.append(claim)
-            if claim.get("task_id") == task["id"] and claim.get("owner") != owner and requested.intersection(existing):
+            elif claim.get("owner") != owner:
                 conflicts.append(claim)
         if conflicts:
             emit({"ok": False, "error": "claim conflict", "conflicts": conflicts}, 1)
@@ -947,7 +1319,9 @@ def command_kanban_snapshot(_: argparse.Namespace) -> None:
             "active": bool(active),
             "columns": columns,
             "claims": claims_payload()["claims"],
-            "handoffs": read_handoffs(),
+            # handoffs.jsonl is append-only and unbounded; cap the snapshot so
+            # payload size doesn't grow forever (the UI shows the last 5).
+            "handoffs": read_handoffs()[-20:],
             "health": check_payload(),
         }
     )
@@ -1010,7 +1384,7 @@ def _tool_version(binary: str, *flags: str) -> str:
     return out[0] if out else ""
 
 
-def doctor_payload() -> dict[str, Any]:
+def doctor_payload(staleness_hours: float = 24.0) -> dict[str, Any]:
     """Diagnose this Agent Ops install. Read-only; safe to run at any time.
 
     The output is structured so it can be parsed by tooling, but is also
@@ -1063,6 +1437,7 @@ def doctor_payload() -> dict[str, Any]:
             str(LEGACY_INTEGRATIONS_DIR.relative_to(ROOT)) + "/"
         )
 
+    claims = claims_health(staleness_hours)
     return {
         "ok": health["ok"] and not state_problems and not legacy_layout,
         "agent_ops": {
@@ -1078,6 +1453,17 @@ def doctor_payload() -> dict[str, Any]:
             "locking": "fcntl" if fcntl is not None else "atomic-write-only",
         },
         "health": health,
+        "claims": {
+            "staleness_hours": staleness_hours,
+            "stale": claims["stale"],
+            "orphans": claims["orphans"],
+            "remedy": (
+                "release with `agent-ops claim --release <paths>` "
+                "(--force --reason '<why>' for another owner's claims)"
+                if claims["stale"] or claims["orphans"]
+                else ""
+            ),
+        },
         "state_problems": state_problems,
         "legacy_layout": {
             "files_at_root": legacy_layout,
@@ -1090,9 +1476,9 @@ def doctor_payload() -> dict[str, Any]:
     }
 
 
-def command_doctor(_: argparse.Namespace) -> None:
+def command_doctor(args: argparse.Namespace) -> None:
     ensure_dirs()
-    payload = doctor_payload()
+    payload = doctor_payload(staleness_hours=getattr(args, "staleness_hours", 24.0))
     emit(payload, 0 if payload["ok"] else 1)
 
 
@@ -1138,10 +1524,28 @@ def build_parser() -> argparse.ArgumentParser:
     start.set_defaults(func=command_start)
 
     claim = sub.add_parser("claim")
-    claim.add_argument("paths", nargs="+")
+    claim.add_argument("paths", nargs="*")
     claim.add_argument("--owner")
-    claim.add_argument("--reason", default="active implementation")
+    claim.add_argument("--reason", default=None)
+    claim.add_argument("--release", action="store_true",
+                       help="release claims on the given paths instead of claiming")
+    claim.add_argument("--release-all", dest="release_all", action="store_true",
+                       help="release every claim owned by --owner (all claims with --force)")
+    claim.add_argument("--force", action="store_true",
+                       help="with --release: release another owner's claims (requires --reason; audited)")
     claim.set_defaults(func=command_claim)
+
+    claims_check = sub.add_parser("claims-check")
+    claims_check.add_argument("--stdin", action="store_true", required=True,
+                              help="read staged paths from stdin")
+    claims_check.add_argument("-z", dest="null", action="store_true",
+                              help="paths are NUL-delimited (git -z output)")
+    claims_check.set_defaults(func=command_claims_check)
+
+    hook = sub.add_parser("hook")
+    hook.add_argument("action", choices=["install", "uninstall"])
+    hook.add_argument("--dry-run", dest="dry_run", action="store_true")
+    hook.set_defaults(func=command_hook)
 
     handoff = sub.add_parser("handoff")
     handoff.add_argument("--from-owner")
@@ -1171,7 +1575,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("check").set_defaults(func=command_check)
 
-    sub.add_parser("doctor").set_defaults(func=command_doctor)
+    doctor = sub.add_parser("doctor")
+    doctor.add_argument("--staleness-hours", dest="staleness_hours", type=float, default=24.0,
+                        help="claims older than this are flagged stale (default 24)")
+    doctor.set_defaults(func=command_doctor)
 
     return parser
 
