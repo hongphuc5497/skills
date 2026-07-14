@@ -73,18 +73,18 @@ Standalone, well-tested skills for common development workflows.
 | [**auto-push**](skills/auto-push/) | Generate a commit message, stage all changes, and push to remote after scanning for secrets, large files, and protect... |
 | [**brand-name-checker**](skills/brand-name-checker/) | Check product and brand names for conflicts across trademarks, domains, social handles, and package registries. Retur... |
 | [**cavecrew**](skills/cavecrew/) | Decision guide for delegating to caveman-style subagents. Tells the main thread WHEN to spawn `cavecrew-investigator`... |
-| [**caveman**](skills/caveman/) | Ultra-compressed communication mode. Cuts token usage ~75% by speaking like caveman while keeping full technical accu... |
+| [**caveman**](skills/caveman/) | Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full te... |
 | [**caveman-commit**](skills/caveman-commit/) | Ultra-compressed commit message generator. Cuts noise from commit messages while preserving intent and reasoning. Con... |
 | [**caveman-compress**](skills/caveman-compress/) | Compress natural language memory files (CLAUDE.md, todos, preferences) into caveman format to save input tokens. Pres... |
 | [**caveman-help**](skills/caveman-help/) | Quick-reference card for all caveman modes, skills, and commands. One-shot display, not a persistent mode. Trigger: /... |
 | [**caveman-review**](skills/caveman-review/) | Ultra-compressed code review comments. Cuts noise from PR feedback while preserving the actionable signal. Each comme... |
 | [**caveman-stats**](skills/caveman-stats/) | Show real token usage and estimated savings for the current session. Reads directly from the Claude Code session log ... |
 | [**code-optimizer**](skills/code-optimizer/) | Analyze code for performance bottlenecks, memory leaks, and algorithmic inefficiencies. Use when asked to optimize, f... |
-| [**code-review**](skills/code-review/) | Review code changes for bugs, security vulnerabilities, and code quality issues — producing prioritized findings with... |
+| [**code-review**](skills/code-review/) | Review or improve code — one skill, four modes: bug/security review (default), performance, clean-code audit, slop cl... |
 | [**context-hub**](skills/context-hub/) | Fetch current API/SDK docs before writing integration code. Use whenever writing code that integrates with an externa... |
-| [**docs-generator**](skills/docs-generator/) | Generate and restructure project documentation into a clear, accessible hierarchy. Use when asked to organize docs, g... |
+| [**docs-generator**](skills/docs-generator/) | Generate and restructure project docs into a clear, accessible hierarchy. Use to organize, generate, or restructure a... |
 | [**grill-me**](skills/grill-me/) | A relentless interview to sharpen a plan or design. |
-| [**grilling**](skills/grilling/) | Interview the user relentlessly about a plan or design. Use when the user wants to stress-test a plan before building... |
+| [**grilling**](skills/grilling/) | Grill the user relentlessly about a plan or design. Use when the user wants to stress-test a plan before building, or... |
 | [**handoff**](skills/handoff/) | Compact the current conversation into a handoff document for another agent to pick up. |
 | [**idea-validator**](skills/idea-validator/) | Validate app/startup ideas with market, feasibility, commercial, and open-source competitor analysis. Use when asked ... |
 | [**oss-ready**](skills/oss-ready/) | Transform a project into a professional open-source repository by adding LICENSE, README, CONTRIBUTING, CODE_OF_CONDU... |
