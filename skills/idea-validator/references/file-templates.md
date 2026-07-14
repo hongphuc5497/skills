@@ -2,7 +2,7 @@
 
 The canonical markdown structure for `idea.md` and `validate.md`. Read this when creating or updating either file (Setup step 2/3, and each phase's "Update `idea.md`/`validate.md`" instruction). The field content itself is defined by the phase instructions in SKILL.md — this file only owns header names, order, and placeholder format; do not restate phase guidance here when updating it.
 
-### idea.md
+## idea.md
 ```markdown
 # Idea: [Name]
 
@@ -28,7 +28,7 @@ The canonical markdown structure for `idea.md` and `validate.md`. Read this when
 [Updates from conversation]
 ```
 
-### validate.md
+## validate.md
 ```markdown
 # Validation: [Name]
 
