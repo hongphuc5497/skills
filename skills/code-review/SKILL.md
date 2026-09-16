@@ -4,7 +4,7 @@ description: "Review or improve code — one skill, four modes: bug/security rev
 license: MIT
 effort: high
 metadata:
-  version: 2.0.1
+  version: 2.1.1
   author: "Luong NGUYEN <luongnv89@gmail.com>"
   architecture: "router (4 modes, each a self-contained workflow in references/)"
 ---
@@ -30,7 +30,8 @@ mode you need — this protects the agent's context budget.
 2. **Otherwise infer** from the request:
    - "review", "find bugs", "security", "is this correct", "look for vulnerabilities" → **review**
    - "slow", "faster", "optimize", "bottleneck", "memory leak", "performance" → **perf**
-   - "clean code", "readability", "audit against standards", "clean-code audit" → **clean**
+   - "clean code audit" (or "clean-code audit"), "clean code review", "check this against clean code" → **clean**
+     (user-invoked only — a bare "readability" or "audit against standards" ask is ambiguous: use step 3)
    - "remove slop", "clean up the codebase", "refactor out cruft / dead code / duplication" → **cleanup**
 3. **Ambiguous?** Ask which mode, naming the options. Fall back to **review** only when the intent is
    clearly "review this" with no other signal.
@@ -74,3 +75,58 @@ execute each mode's phases inline (less rigorous, but functional).
 Modes compose: a common flow is **clean** (audit → `CLEAN_CODE_AUDIT.md`) then **cleanup** (apply the
 refactors), or **review**/**perf** to find issues before fixing. Run one mode at a time; confirm with
 the user before switching into the code-writing `cleanup` mode.
+
+## Prerequisites
+
+- Require a readable target diff, PR, file set, or repository; ask for scope when none is provided.
+- Check that every reference and agent required by the selected mode is available before starting.
+- For `clean` or `cleanup`, validate repository state and follow that mode's sync, backup, dry-run,
+  confirmation, and rollback instructions. Stop on sync errors or failed safety checks.
+
+## Acceptance Criteria
+
+Verify every run against the selected mode's own acceptance criteria, then assert all of these router
+criteria:
+
+- Exactly one mode was selected and its reference workflow was followed end to end.
+- Read-only modes changed no source files; verify with a path-scoped `git diff` when applicable.
+- Every finding cites concrete evidence and the expected output artifact or report was produced.
+- Tests or validation commands required by the selected mode completed with their expected result.
+- Edge cases, limitations, skipped files, and degraded subagent coverage are disclosed.
+
+## Expected Output
+
+Example response after a read-only review:
+
+```text
+Mode: review
+Result: PASS
+Findings: 1 critical, 2 major, 0 minor
+Output: CODE_REVIEW.md
+Validation: reviewer pass complete; no source files changed
+```
+
+## Step Completion Reports
+
+After routing and after the selected workflow, emit a compact report:
+
+```text
+◆ Code Review ([mode])
+  Mode selection:      √ pass
+  Workflow criteria:   √ pass
+  Output verified:     √ pass
+  Safety boundary:     √ pass
+  Result:              PASS | FAIL | PARTIAL
+```
+
+Use `× fail — reason` for any unmet check. Never report PASS while a selected-mode acceptance
+criterion, expected output, required test, or safety guardrail is unresolved.
+
+## Edge Cases
+
+- Unknown `mode:` value → reject it and list the four valid modes.
+- Mixed intents across modes → ask which mode to run first; never merge workflows implicitly.
+- Missing target or inaccessible files → stop and request a concrete scope instead of guessing.
+- Agent tool unavailable → use the selected reference's inline fallback and disclose reduced coverage.
+- A read-only mode requests edits mid-run → finish the report, then require explicit approval before
+  starting a separate `cleanup` run.

@@ -1,10 +1,10 @@
 ---
 name: tasks-generator
-description: "Generate development tasks from a PRD file with sprint-based planning. Use when users ask to create tasks from PRD, break down the PRD, generate sprint tasks, or want to convert product requirements into actionable development tasks. Creates/updates tasks.md and always reports GitHub links to changed files. Don't use for writing a PRD, authoring a TAD, or executing tasks (see openspec-task-loop)."
+description: "Generate sprint-based development tasks from a PRD. Use when asked to create tasks or break down requirements. Don't use for PRD/TAD authoring or task execution."
 license: MIT
 effort: max
 metadata:
-  version: 1.3.0
+  version: 1.3.2
   author: "Luong NGUYEN <luongnv89@gmail.com>"
 ---
 
@@ -172,14 +172,7 @@ Each task must include:
 
 ## Quality Checks
 
-Before finalizing:
-- [ ] All PRD requirements addressed
-- [ ] Each task links to PRD
-- [ ] No circular dependencies
-- [ ] Clear MVP vs post-MVP distinction
-- [ ] Ambiguous requirements flagged
-- [ ] All tasks in dependency table
-- [ ] Critical path identified
+The pre-finalize bars are defined once, in [Acceptance Criteria](#acceptance-criteria) — check every item there before reporting `tasks.md` complete. [references/self-test.md](references/self-test.md) holds the mechanical greps behind them.
 
 ## README Maintenance (ideas repo only)
 
@@ -256,6 +249,7 @@ The skill run is considered successful only if ALL of the following hold:
 - [ ] No circular dependencies (see Phase 4).
 - [ ] At least one task per PRD requirement; ambiguous PRD items are flagged in a dedicated section.
 - [ ] Critical path is identified and stated explicitly.
+- [ ] The MVP vs post-MVP split is explicit — every sprint is labelled POC, MVP, or Full Features.
 - [ ] If a prior `tasks.md` existed, a `tasks_backup_YYYY_MM_DD_HHMMSS.md` file is created.
 - [ ] Final report includes GitHub links to `tasks.md` (and `README.md` if updated) plus the commit hash.
 

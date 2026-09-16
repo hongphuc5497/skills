@@ -9,6 +9,7 @@ Usage:
     python audit_seo.py <project-root> [--max-files N]
 """
 
+import argparse
 import sys
 import os
 import re
@@ -525,30 +526,47 @@ def detect_framework(project_root):
     return None
 
 
+def positive_file_limit(value):
+    """Parse a strictly positive --max-files value for argparse."""
+    try:
+        limit = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(
+            f"must be an integer greater than 0, got {value!r}; "
+            "use a value such as `--max-files 50`"
+        ) from exc
+
+    if limit <= 0:
+        raise argparse.ArgumentTypeError(
+            f"must be greater than 0, got {value!r}; "
+            "use a value such as `--max-files 50`"
+        )
+    return limit
+
+
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python audit_seo.py <project-root> [--max-files N]")
-        print("\nScans HTML/template files for SEO and AI bot issues.")
-        print("Outputs a JSON report to stdout.")
+    parser = argparse.ArgumentParser(
+        description="Audit a web project for common SEO and AI bot issues."
+    )
+    parser.add_argument("project_root", metavar="project-root")
+    parser.add_argument(
+        "--max-files",
+        type=positive_file_limit,
+        default=50,
+        metavar="N",
+        help="maximum number of representative files to audit (must be greater than 0)",
+    )
+    args = parser.parse_args()
+
+    if not Path(args.project_root).exists():
+        print(
+            f"Error: project root does not exist: {args.project_root!r}. "
+            "Pass the path to an existing web project directory.",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
-    project_root = sys.argv[1]
-    max_files = 50
-
-    if "--max-files" in sys.argv:
-        idx = sys.argv.index("--max-files")
-        if idx + 1 < len(sys.argv):
-            try:
-                max_files = int(sys.argv[idx + 1])
-            except ValueError:
-                print(f"Error: --max-files must be a number, got '{sys.argv[idx + 1]}'")
-                sys.exit(1)
-
-    if not Path(project_root).exists():
-        print(f"Error: Project root not found: {project_root}")
-        sys.exit(1)
-
-    audit_project(project_root, max_files)
+    audit_project(args.project_root, args.max_files)
 
 
 if __name__ == "__main__":
