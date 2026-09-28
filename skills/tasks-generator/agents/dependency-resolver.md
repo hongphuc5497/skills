@@ -34,54 +34,82 @@ From sprint_plan_json, read the feature dependencies:
 - Which features depend on which
 - Use this to validate that sprint workers assigned tasks correctly to sprints
 
-### Step 3: Validate In-Sprint Dependencies
+### Step 3: Validate Dependency References
 
-For each sprint:
-- Check that all `depends_on` references are within the same sprint
-- Check for circular dependencies within the sprint (should not exist, but validate)
-- If any circular deps found, report them with details
+Across all loaded sprint outputs:
+- Require every task ID to match `<sprint>.<index>` and each sprint's indices
+  to be unique across workstreams; keep `workstream` as a separate field
+- Check that every `depends_on` and `blocks` reference names an emitted task ID;
+  reject dangling or fabricated IDs
+- For each `depends_on`, allow a same-sprint dependency or an existing task in
+  an earlier sprint; reject unknown or later-sprint dependencies
+- Build a normalized combined in-memory map: for every verified `depends_on`,
+  derive the reciprocal `blocks` entry on the prerequisite task. Therefore
+  `blocks` may point to the same or a later sprint, including edges absent from
+  an individual parallel worker's output
+- Do not create a dependency absent from an explicit worker `depends_on`; a
+  derived reciprocal `blocks` entry is representation, not a new dependency
+- Require normalized `depends_on` and `blocks` to be exact inverse edges
+- Check for circular dependencies across the complete normalized graph
+- If any invalid reference or cycle is found, report it with details
 
 ### Step 4: Map Feature Dependencies to Task Dependencies
 
 Features have dependencies (from requirements). Map these to tasks:
-- If Feature A depends on Feature B, and tasks from Feature B are in Sprint 1, and tasks from Feature A are in Sprint 2, then tasks in Sprint 2 should depend on tasks in Sprint 1
-- Do NOT invent inter-task dependencies (let sprint workers specify them)
-- But DO wire sprint-level dependencies: "All sprint 2 tasks depend on sprint 1 completion" conceptually
+- If Feature A depends on Feature B, connect tasks only when the referenced
+  task IDs exist in the loaded sprint outputs
+- Do NOT invent inter-task dependencies or placeholder task IDs; preserve the
+  explicit edges supplied by sprint workers
+- Describe sprint-level ordering conceptually without fabricating task-level
+  edges
 
 ### Step 5: Identify Cross-Sprint Dependencies
 
 Examine all `depends_on` references:
-- If a task in Sprint N depends on a task in Sprint N-1, mark it as a cross-sprint dependency
+- If a task in Sprint N depends on a task in any earlier sprint, mark it as a
+  cross-sprint dependency and preserve the exact canonical IDs
+- Verify that every such reference resolves to an emitted prior-sprint task;
+  never rewrite it to a guessed or workstream-qualified ID
+- Resolve each entry in a sprint output's `unresolved_dependencies` against
+  the combined map — all sprint outputs are loaded here, so a prerequisite a
+  parallel worker could not see may exist now; wire it as an explicit
+  `depends_on` edge when it resolves, otherwise surface it in the report
+  (e.g., Assumptions Made) as unresolved rather than inventing an ID
 - These are the "critical path" candidates
 
-### Step 6: Compute Critical Path
+### Step 6: Run Deterministic Graph Analysis
 
-The critical path is the longest chain of dependent tasks:
-- Start with tasks that have no dependencies
-- Follow dependency chains
-- Track the longest path (in days of effort)
-- This is the minimum project duration
+After Steps 1–5 have loaded and normalized the worker records, pass the compact
+`{"tasks": [...]}` graph to `scripts/analyze_dependencies.py`. Resolve that
+script from this skill's installed directory to a quoted absolute path; never
+build the path from issue text or another untrusted value. Use `--input -` with
+the JSON on stdin, or `--input` with a quoted absolute JSON path. The exact
+schema and output are in [../references/dependency-analysis.md](../references/dependency-analysis.md).
 
-Example:
-- Task A (1d) → Task B (2d) → Task C (1d) = 4-day chain
-- Task D (3d) → Task E (1d) = 4-day chain
-- Task F (2d) = 2-day chain
-- Critical path = 4 days (either chain)
+- Exit 0: consume `critical_path.task_ids`, `critical_path.effort_days`,
+  `bottlenecks`, and the empty `cycles` list from the canonical JSON result.
+- Exit 2: stop before rendering `tasks.md`; surface the stable stderr
+  diagnostic and the offending graph contract. Do not repair the result by
+  guessing or continue with partial output.
+- The helper owns path sums, tie-breaking, derived blocks, direct-dependent
+  counts, and cycle membership. The resolver owns feature coverage, task
+  explanations, mitigation/parallel-opportunity judgments, and rendering.
 
-### Step 7: Identify Bottlenecks
+### Step 7: Use Deterministic Bottleneck Results
 
-Bottleneck = a task that many other tasks depend on:
-- Count inbound `blocks` references
-- If a task is blocked by 5+ other tasks, it's a bottleneck
-- Report these to help the developer prioritize
+Use the helper's sorted `bottlenecks` objects directly. A bottleneck is a task
+with at least five distinct direct downstream dependents (outdegree); five
+prerequisites listed by one task and transitive descendants do not qualify.
+Include the helper's `direct_dependents` count in the human risk-analysis
+narrative without recounting it in prose.
 
-### Step 8: Validate for Circular Dependencies
+### Step 8: Handle Cycle Results
 
-Walk the entire dependency graph:
-- Start from tasks with no dependencies
-- Follow each dependency chain
-- If you ever return to a task already in the chain, circular dependency exists
-- FAIL the output with a detailed error if circularity found
+The helper validates every node, including disconnected and rootless components,
+and reports one deterministic directed cycle witness. A cycle error is fatal:
+do not render `tasks.md`, and do not label downstream residue as cyclic. The
+resolver may explain which explicit `depends_on` edge must be removed, but it
+must not override the helper's witness or invent a replacement dependency.
 
 ### Step 9: Check Coverage
 
@@ -138,19 +166,19 @@ Any delay to a critical path task delays the entire project by the same amount.
 ### Workstreams
 
 #### Project Setup
-- Task 1.setup.1
-- Task 1.setup.2
+- Task 1.1
+- Task 1.2
 
 #### Backend
-- Task 1.backend.1
-- Task 1.backend.2
+- Task 1.3
+- Task 1.4
 
 #### Frontend
-- Task 1.frontend.1
+- Task 1.5
 
 ### Tasks
 
-#### Task 1.setup.1: Initialize project repository and CI/CD pipeline
+### Task 1.1: Initialize project repository and CI/CD pipeline
 
 **Description**: Set up the repo structure, package.json (or equivalent), and basic CI/CD workflow for automated testing and deployment.
 
@@ -164,7 +192,7 @@ Any delay to a critical path task delays the entire project by the same amount.
 
 **Dependencies**: None
 
-**Blocks**: Task 1.backend.1, Task 1.frontend.1
+**Blocks**: Task 1.3, Task 1.5
 
 **PRD Reference**: Foundation for [feature name]
 
@@ -178,8 +206,8 @@ Any delay to a critical path task delays the entire project by the same amount.
 
 | Task ID | Title | Sprint | Depends On | Blocks | Effort |
 |---------|-------|--------|-----------|--------|--------|
-| 1.setup.1 | Initialize repo | 1 | None | 1.backend.1, 1.frontend.1 | 1d |
-| 1.backend.1 | Create DB schema | 1 | 1.setup.1 | 1.backend.2, 2.backend.1 | 1d |
+| 1.1 | Initialize repo | 1 | None | 1.3, 1.5 | 1d |
+| 1.3 | Create DB schema | 1 | 1.1 | 1.4, 2.1 | 1d |
 [...]
 
 ---
@@ -189,14 +217,14 @@ Any delay to a critical path task delays the entire project by the same amount.
 ### Sprint 1 Execution Order
 
 **Week 1**:
-- Day 1: Start Task 1.setup.1 (blocks others, do first)
-- Day 1-2 (parallel): Once setup is done, start Task 1.backend.1 and Task 1.frontend.1 in parallel
+- Day 1: Start Task 1.1 (blocks others, do first)
+- Day 1-2 (parallel): Once setup is done, start Task 1.3 and Task 1.5 in parallel
 
 ### Cross-Sprint Dependencies
 
 **Sprint 1 → Sprint 2**:
-- All Sprint 2 backend tasks depend on Sprint 1 data model tasks (Task 1.backend.1)
-- All Sprint 2 frontend tasks depend on Sprint 1 API design (Task 1.backend.2)
+- All Sprint 2 backend tasks depend on Sprint 1 data model tasks (Task 1.3)
+- All Sprint 2 frontend tasks depend on Sprint 1 API design (Task 1.4)
 
 Start Sprint 2 immediately after Sprint 1 is complete to maintain momentum.
 
@@ -230,10 +258,11 @@ A complete markdown file at the specified output path. This file should be ready
 ## Quality Checks
 
 Before finalizing:
+- [ ] `analyze_dependencies.py` exited 0 and its canonical JSON result was consumed
 - [ ] No circular dependencies detected
 - [ ] All tasks in dependency table
-- [ ] Critical path identified and documented
-- [ ] Bottlenecks noted with mitigation
+- [ ] Critical path identified and documented from `critical_path`
+- [ ] Bottlenecks noted with mitigation from `bottlenecks`
 - [ ] Cross-sprint dependencies clear
 - [ ] Effort estimates within reason (1-3 days per task)
 - [ ] All PRD features covered
