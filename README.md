@@ -78,7 +78,7 @@ Standalone, well-tested skills for common development workflows.
 | [**caveman-compress**](skills/caveman-compress/) | Compress a memory file such as CLAUDE.md or a todo list into caveman format to save input tokens, keeping a readable ... |
 | [**caveman-help**](skills/caveman-help/) | Quick-reference card for caveman modes, skills and commands. Trigger: /caveman-help or "caveman help". |
 | [**caveman-review**](skills/caveman-review/) | Compressed code review - one line per finding with location, problem and fix. Use for /caveman-review, "review this P... |
-| [**caveman-stats**](skills/caveman-stats/) | Show real token usage and estimated savings for the current session, read from the session log. Trigger: /caveman-stats. |
+| [**caveman-stats**](skills/caveman-stats/) | Show recorded output and cache-read token usage and mode attribution for the current Claude Code session, or locate t... |
 | [**code-optimizer**](skills/code-optimizer/) | Analyze code for performance bottlenecks, memory leaks, and algorithmic inefficiencies. Use when asked to optimize, f... |
 | [**code-review**](skills/code-review/) | Review or improve code — one skill, four modes: bug/security review (default), performance, clean-code audit, slop cl... |
 | [**context-hub**](skills/context-hub/) | Fetch current API/SDK docs before writing integration code. Use whenever writing code that integrates with an externa... |
