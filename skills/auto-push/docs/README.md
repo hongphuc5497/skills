@@ -13,8 +13,9 @@
 
 - Detect secrets, API keys, large files, and build artifacts before pushing
 - Generate conventional commit messages (feat, fix, docs, etc.) automatically
-- Pre-push confirmation with detailed change summary
+- Dry-run change summary; asks for confirmation only when a safety check fails, and never pushes a real secret or a file over 10 MB on confirmation alone
 - Handle non-fast-forward pushes with fallback strategies
+- Final report states the result, the checks that ran, what was not checked, and any action left to you
 
 ## When to Use
 
@@ -22,7 +23,7 @@
 |---|---|
 | "Push everything" | Stage, commit, and push all changes |
 | "Commit and push all" | Bulk push with safety checks |
-| "Push all my changes" | Analyze, confirm, then push |
+| "Push all my changes" | Analyze, check for risks, then push |
 
 ## How It Works
 
@@ -43,7 +44,7 @@ graph TD
 Install via [npx (Vercel)](https://www.npmjs.com/package/skills):
 
 ```bash
-npx skills add https://github.com/luongnv89/skills --skill auto-push
+npx skills@1.7.0 add https://github.com/luongnv89/skills --skill auto-push
 ```
 
 Or via [agent-skill-manager (asm)](https://www.npmjs.com/package/agent-skill-manager):
@@ -60,4 +61,4 @@ asm install github:luongnv89/skills:skills/auto-push
 
 ## Output
 
-Committed and pushed changes with a confirmation report showing commit hash, branch info, files changed, and insertions/deletions.
+Committed and pushed changes with a report showing commit hash, branch info, files changed, insertions/deletions, and Evidence, Uncertainty, and Decision lines.

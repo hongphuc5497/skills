@@ -10,7 +10,7 @@
 | No remote configured | Report "no remote origin"; suggest `git remote add origin <url>` |
 | Push rejected (non-fast-forward) | Run `git pull --rebase && git push`; if rebase fails, stop and report |
 | Pre-commit hook fails | Surface hook output; do not retry; ask user to fix the hook issue |
-| Binary or large file (>10 MB) | Block and suggest Git LFS; do not stage the file |
+| Binary or large file (>10 MB without Git LFS) | Blocking finding: stop before Step 4, so `git add .` never stages it. Confirmation does not clear it. Suggest `git lfs track`, deleting the file, or a `.gitignore` entry, then re-run |
 
 ## Step Completion Reports
 
@@ -51,4 +51,4 @@ Adapt the check names to match what the step actually validates. Use `√` for p
 If user wants control, suggest:
 1. **Selective staging**: Review/stage specific files
 2. **Interactive staging**: `git add -p` for patch selection
-3. **PR workflow**: Create branch → push → PR (use `/pr` command)
+3. **PR workflow**: Create branch → push → open a PR with `gh pr create`

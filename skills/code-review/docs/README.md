@@ -11,6 +11,13 @@
 > the mode from your request, or you pass an explicit `mode:`. Three modes are read-only; one
 > (`cleanup`) writes code and only runs when you ask for it.
 
+## Highlights
+
+- Four modes behind one entry point: bug/security review, performance, clean-code audit, slop cleanup
+- Explicit `mode:` override, or the mode is inferred from your wording; ambiguous asks get a question
+- Three modes never touch source files; `cleanup` runs only on explicit request and confirms first
+- Every run ends with a result, the evidence behind it, what was not verified, and the next decision
+
 ## Modes
 
 | Mode | Use when you want to... | Reads / writes | Output |
@@ -29,6 +36,7 @@
 | "Clean-code audit", "clean code review", "check this against clean code" | clean |
 | "Clean up the codebase", "remove the AI slop and dead code" | cleanup |
 | "code-review mode:perf" (explicit override) | perf |
+| "Review and optimize this" (two modes) | asks which mode to use |
 
 ## How It Works
 
@@ -39,8 +47,13 @@ graph TD
     M -->|perf| P["Performance analysis -> report"]
     M -->|clean| C["Clean Code audit -> CLEAN_CODE_AUDIT.md"]
     M -->|cleanup| U["Refactor out slop -> writes code (opt-in)"]
+    R --> S["Result, evidence, uncertainty, decision"]
+    P --> S
+    C --> S
+    U --> S
     style A fill:#4CAF50,color:#fff
     style U fill:#FF5722,color:#fff
+    style S fill:#2196F3,color:#fff
 ```
 
 The `cleanup` mode is the only one that modifies files; it never fires by weak inference and confirms before writing.
@@ -48,7 +61,7 @@ The `cleanup` mode is the only one that modifies files; it never fires by weak i
 ## Installation
 
 ```bash
-npx skills add https://github.com/luongnv89/skills --skill code-review
+npx skills@1.7.0 add https://github.com/luongnv89/skills --skill code-review
 ```
 
 Or via [agent-skill-manager (asm)](https://www.npmjs.com/package/agent-skill-manager):
