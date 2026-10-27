@@ -1,0 +1,5 @@
+{
+  // Upstream-synced skill content is owned by its sources (PR #17 et al).
+  // Do not lint/rewrite it locally — respect upstream as-is; lint only our own markdown.
+  "ignores": ["skills/**"]
+}
