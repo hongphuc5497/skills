@@ -73,10 +73,10 @@ Standalone, well-tested skills for common development workflows.
 | [**auto-push**](skills/auto-push/) | Generate a commit message, stage all changes, and push to remote after scanning for secrets, large files, and protect... |
 | [**brand-name-checker**](skills/brand-name-checker/) | Check product and brand names for conflicts across trademarks, domains, social handles, and package registries. Retur... |
 | [**cavecrew**](skills/cavecrew/) | When to delegate to `cavecrew-investigator` (locate code), `cavecrew-builder` (1-2 file edit) or `cavecrew-reviewer` ... |
-| [**caveman**](skills/caveman/) | Ultra-compressed communication mode that cuts output tokens while keeping technical accuracy. Levels: lite, full, ult... |
+| [**caveman**](skills/caveman/) | Terse caveman voice: answer first, fluff gone, every technical fact kept. Use for /caveman, "caveman mode", "talk lik... |
 | [**caveman-commit**](skills/caveman-commit/) | Write a Conventional Commits message compressed to intent only. Use for "write a commit", "commit message", /commit o... |
 | [**caveman-compress**](skills/caveman-compress/) | Compress a memory file such as CLAUDE.md or a todo list into caveman format to save input tokens, keeping a readable ... |
-| [**caveman-help**](skills/caveman-help/) | Quick-reference card for caveman modes, skills and commands. Trigger: /caveman-help or "caveman help". |
+| [**caveman-help**](skills/caveman-help/) | Quick-reference card for the three caveman skills and their commands. Trigger: /caveman-help or "caveman help". |
 | [**caveman-review**](skills/caveman-review/) | Compressed code review - one line per finding with location, problem and fix. Use for /caveman-review, "review this P... |
 | [**caveman-stats**](skills/caveman-stats/) | Show recorded output and cache-read token usage and mode attribution for the current Claude Code session, or locate t... |
 | [**code-optimizer**](skills/code-optimizer/) | Analyze code for performance bottlenecks, memory leaks, and algorithmic inefficiencies. Use when asked to optimize, f... |
