@@ -1,12 +1,12 @@
 ---
 name: code-review
-description: "Review or improve code — one skill, four modes: bug/security review (default), performance, clean-code audit, slop cleanup. Pass mode:review|perf|clean|cleanup or infer. Don't use for writing features or generating tests (use test-coverage)."
+description: "Review or improve code in four modes: bug/security review (default), performance, clean-code audit, slop cleanup (mode:review|perf|clean|cleanup). Don't use for features, tests (test-coverage) or a full comment audit (comment-audit)."
 license: MIT
-effort: high
 metadata:
-  version: 2.3.1
+  version: 2.10.0
   author: "Luong NGUYEN <luongnv89@gmail.com>"
   architecture: "router (4 modes, each a self-contained workflow in references/)"
+  effort: "high"
 ---
 
 # Code Review
@@ -19,7 +19,7 @@ mode you need — this protects the agent's context budget.
 
 | Mode | Use when the user wants to... | Reads / writes | Output | Workflow |
 |---|---|---|---|---|
-| **review** (default) | find bugs, security holes, quality issues in a diff/PR | read-only | prioritized findings report | `references/review-mode.md` |
+| **review** (default) | find bugs, security holes, quality issues, or weakened tests and gates in a diff/PR | read-only | prioritized findings, each introduced or pre-existing | `references/review-mode.md` |
 | **perf** | make code faster — bottlenecks, leaks, algorithmic waste | read-only | performance findings report | `references/perf-mode.md` |
 | **clean** | audit readability/standards vs the bbv Clean Code cheat sheet | read-only | `CLEAN_CODE_AUDIT.md` | `references/clean-mode.md` |
 | **cleanup** | actually refactor out AI slop, dead code, duplication, cruft | **WRITES CODE** | modified source files | `references/cleanup-mode.md` |
@@ -53,7 +53,16 @@ they must not otherwise mutate the index, refs, stash, branch, worktree, or remo
 - Review and perf analysis record `git rev-parse HEAD`, `git status`, and local tracking
   observations without claiming remote freshness. They do not fetch, stash, pull, rebase,
   checkout/switch, create or delete branches/worktrees, or apply source fixes. A separately
-  approved mutation workflow owns its own freshness and stash-first sync contract.
+  approved mutation workflow owns its own freshness check and sync gates.
+- Review mode binds `CODE_REVIEW.md` to the full head SHA and the base it compared against, a
+  local base disclosed as not fetched. A report whose head is not the current `HEAD` is stale
+  wherever it is used or validated (`references/review-mode.md`, *Review Binding*).
+- Review mode reads a repo's `REVIEW.md` from the base commit, never from the working tree or the
+  change, applies only rules whose trigger matches the diff, and re-checks an earlier report's open
+  findings first (*Review Rules*, *Earlier Round*).
+- A session that wrote the change hands review mode to a fresh-context agent and relays its report
+  unchanged; with no Agent tool it reviews inline, and the report and `Uncertainty` say
+  `self-review, not independent` (*Independent Review*).
 - **Confirm before the first write** in `cleanup`, and follow that mode's own gating.
 
 ## Repo Sync Before Edits (mandatory)
@@ -71,7 +80,7 @@ git fetch origin && git pull --rebase origin "$branch"
 - If `origin` is missing, or the pull or stash pop conflicts, stop and ask the user. Do not write any file.
 - If the target is not a git repo, `clean` skips the sync and notes that in its report.
 
-The full step, with recovery commands, is in `references/clean-mode.md` and `references/cleanup-mode.md`.
+The full step is in `references/clean-mode.md` (with stash recovery commands) and `references/cleanup-mode.md`.
 
 ## Run the mode's workflow
 
@@ -80,7 +89,7 @@ uses (already colocated under this skill):
 
 - **review** → `references/review-mode.md` — agents `agents/reviewer.md`, `agents/file-reviewer.md`, `agents/report-assembler.md`; refs `references/subagent-architecture.md`, `references/code-smells.md`
 - **perf** → `references/perf-mode.md` — ref `references/language-checks.md`
-- **clean** → `references/clean-mode.md` — refs `references/clean-code-checklist.md`, `references/tdd-checklist.md`, `references/html-report-guide.md`, `references/report-template.html`
+- **clean** → `references/clean-mode.md` — refs `references/clean-code-checklist.md`, `references/tdd-checklist.md`, `references/html-report-guide.md`
 - **cleanup** → `references/cleanup-mode.md` — the 8 cleaner agents in `agents/` (`deduplicator.md`, `type-consolidator.md`, `unused-code-killer.md`, `circular-dep-untangler.md`, `weak-type-strengthener.md`, `defensive-programming-remover.md`, `legacy-code-remover.md`, `slop-comment-cleaner.md`)
 
 ## Environment Check

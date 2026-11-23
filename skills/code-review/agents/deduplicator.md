@@ -1,9 +1,10 @@
 ---
 name: deduplicator
 description: Find duplicate code and apply DRY only when it actually reduces complexity
-role: Code Deduplication Specialist
-wave: 2
-version: 1.0.0
+metadata:
+  role: "Code Deduplication Specialist"
+  wave: "2"
+  version: "1.0.0"
 ---
 
 # Deduplicator Subagent
@@ -64,7 +65,7 @@ For each kept candidate:
 
 ## Output Report
 
-`/.slop-cleanup/wave-2/deduplicator.md`:
+`.slop-cleanup/wave-2/deduplicator.md`:
 
 ```markdown
 # Deduplication Report
