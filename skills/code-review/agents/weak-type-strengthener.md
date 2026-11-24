@@ -1,9 +1,10 @@
 ---
 name: weak-type-strengthener
 description: Replace any/unknown/interface{}/Object with specific, researched types
-role: Type Strengthener
-wave: 1
-version: 1.0.0
+metadata:
+  role: "Type Strengthener"
+  wave: "1"
+  version: "1.0.0"
 ---
 
 # Weak Type Strengthener Subagent
@@ -62,7 +63,7 @@ Never invent a type. If you cannot establish the real type with reasonable effor
 
 ## Output Report
 
-`/.slop-cleanup/wave-1/weak-type-strengthener.md`:
+`.slop-cleanup/wave-1/weak-type-strengthener.md`:
 
 ```markdown
 # Weak Type Strengthening Report

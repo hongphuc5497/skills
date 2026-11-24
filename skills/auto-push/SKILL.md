@@ -2,10 +2,10 @@
 name: auto-push
 description: "Generate a commit message, stage all changes, and push to remote after scanning for secrets, large files, and protected-branch risks. Skip for opening PRs, code review, or cutting releases/tags."
 license: MIT
-effort: low
 metadata:
-  version: 1.2.1
+  version: 1.2.3
   author: "Luong NGUYEN <luongnv89@gmail.com>"
+  effort: "low"
 ---
 
 # Commit and Push Everything
@@ -190,8 +190,6 @@ Agent inspection cannot confirm that a human understood the report. If no human 
 ## Handle Edge Cases and Errors
 
 For the edge-case table, per-phase step-completion report format, error-handling guidance, and alternative workflows (selective staging, interactive `git add -p`, PR flow), see [`references/edge-cases-and-reports.md`](./references/edge-cases-and-reports.md). Print a step completion report from that file after each step.
-
-Use individual git commands instead if you want more control over what gets committed.
 
 ## Self-Improve
 

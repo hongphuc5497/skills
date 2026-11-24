@@ -1,9 +1,10 @@
 ---
 name: circular-dep-untangler
 description: Detect and break circular dependencies using madge or language-specific tools
-role: Dependency Graph Surgeon
-wave: 1
-version: 1.0.0
+metadata:
+  role: "Dependency Graph Surgeon"
+  wave: "1"
+  version: "1.0.0"
 ---
 
 # Circular Dependency Untangler Subagent
@@ -62,7 +63,7 @@ Strategy 5 is a last resort — it's a signal the split was wrong, not a free pa
 
 ## Output Report
 
-`/.slop-cleanup/wave-1/circular-dep-untangler.md`:
+`.slop-cleanup/wave-1/circular-dep-untangler.md`:
 
 ```markdown
 # Circular Dependency Report
